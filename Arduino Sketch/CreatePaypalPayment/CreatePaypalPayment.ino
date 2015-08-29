@@ -68,18 +68,21 @@ void loop() {
     AcceptPayPalPaymentChoreo.run();
 
     while (AcceptPayPalPaymentChoreo.available()) {
-      lcd.setCursor(0, 0);
 
       // read the name of the next output item
       String values = AcceptPayPalPaymentChoreo.readStringUntil('\x1F');
       values.trim(); // use “trim” to get rid of newlines
-      Serial.print(values);
+      //Serial.print(values);
       // read the value of the next output item
       String data = AcceptPayPalPaymentChoreo.readStringUntil('\x1E');
       data.trim(); // use “trim” to get rid of newlines
-      lcd.println(values);
-      if (Pay_ID == "PaymentID") {
-        Serial.println("Received: " + data);
+      //lcd.println(values);
+      if (values == "PaymentID") {
+        
+        Serial.println("PaymentID:"+ data);
+        lcd.setCursor(0, 0);
+        lcd.print("PaymentID:");     
+        lcd.setCursor(0, 1);
         lcd.print(data);
       }
     }
