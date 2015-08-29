@@ -14,6 +14,8 @@
 
 #include <Bridge.h>
 #include <Temboo.h>
+// include the library code:
+#include <LiquidCrystal.h>
 
 /*** SUBSTITUTE YOUR VALUES BELOW: ***/
 
@@ -21,16 +23,20 @@
 // use #define statements to specify these values in a .h file.
 
 // your PayPal app's Client ID, available from developer.paypal.com
-const String PAYPAL_CLIENT_ID = "PAYPAL ID";
+const String PAYPAL_CLIENT_ID = "AXhJHNQGq55tGByoYxgX7fZB4iRuPcJoiY3Dlf_nGHaXplM0Qs--DpOzRhwqOEpjIjeFVjd8kb9Cd02U";
 
 // your PayPal app's Client Secret, available from developer.paypal.com
-const String PAYPAL_CLIENT_SECRET = "PAYPAL CLIENT SECRET";
+const String PAYPAL_CLIENT_SECRET = "EESj5ym8XdFkxjau14gy3mEyBlFEELqyP6mFpWdFzSYbfG0FqPoDgdUI_zKCv632JMxH3WG57n2JNbt9";
 
 // a value to indicate whether you're using the PayPal API sandbox or not: 1 = yes, 0 = no.
 const String USE_SANDBOX = "1";
 
 int numRuns = 1;   // execution count, so this doesn't run forever
 int maxRuns = 10;   // maximum number of times the Choreo should be executed
+
+// initialize the library with the numbers of the interface pins
+LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
+
 
 void setup() {
   Serial.begin(9600);
@@ -39,6 +45,8 @@ void setup() {
   delay(4000);
   while(!Serial);
   Bridge.begin();
+  // set up the LCD's number of columns and rows:
+  lcd.begin(16, 2);
 }
 void loop()
 {
@@ -79,11 +87,13 @@ void loop()
         name.trim(); // use “trim” to get rid of newlines
 
         // read the value of the next output item
+         lcd.setCursor(0, 0);
         String data = ListPaymentsChoreo.readStringUntil('\x1E');
         data.trim(); // use “trim” to get rid of newlines
 
          if (name == "time") {
              Serial.println("Received: " + data);
+             lcd.print(data);
          } else if (name == "amount") {
              Serial.println("Amount: $" + data);
          } else if (name == "id") {
