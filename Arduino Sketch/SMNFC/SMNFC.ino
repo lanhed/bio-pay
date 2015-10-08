@@ -30,7 +30,7 @@
 // is connected to the Arduino:
 
 // Use this line for a breakout with a software SPI connection (recommended):
-//Adafruit_PN532 nfc(PN532_SCK, PN532_MISO, PN532_MOSI, PN532_SS);
+Adafruit_PN532 nfc(PN532_SCK, PN532_MISO, PN532_MOSI, PN532_SS);
 
 // Use this line for a breakout with a hardware SPI connection.  Note that
 // the PN532 SCK, MOSI, and MISO pins need to be connected to the Arduino's
@@ -39,7 +39,7 @@
 //Adafruit_PN532 nfc(PN532_SS);
 
 // Or use this line for a breakout or shield with an I2C connection:
-Adafruit_PN532 nfc(PN532_IRQ, PN532_RESET);
+//Adafruit_PN532 nfc(PN532_IRQ, PN532_RESET);
 
 /*
     We can encode many different kinds of pointers to the card,
@@ -61,7 +61,7 @@ Adafruit_PN532 nfc(PN532_IRQ, PN532_RESET);
 
 
 // For our biopay system
-char * url = "1HHebYZTr1iU1d8mymgTenz7DvTBAjDX6s;840326-5799;pagos@taonico.com,password;";
+char * url = "hOLAMIGOS";
 uint8_t ndefprefix = NDEF_URIPREFIX_NONE;
 
 
@@ -245,8 +245,8 @@ void Readnfc()
       {
         success = nfc.ntag2xx_ReadPage(i, data);
 
-        // Display the current page number
-        Serial.print("PAGE ");
+        /* Display the current page number
+        //Serial.print("PAGE ");
         if (i < 10)
         {
           Serial.print("0");
@@ -256,8 +256,8 @@ void Readnfc()
         {
           Serial.print(i);
         }
-        Serial.print(": ");
-
+        //Serial.print(": ");
+        */
         // Display the results, depending on 'success'
         if (success)
         {
