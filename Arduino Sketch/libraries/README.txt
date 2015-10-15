@@ -16,3 +16,5 @@ All text above must be included in any redistribution
 To download. click the DOWNLOADS button in the top right corner, rename the uncompressed folder Adafruit_PN532. Check that the Adafruit_PN532 folder contains Adafruit_PN532.cpp and Adafruit_PN532.h
 
 Place the Adafruit_PN532 library folder your <arduinosketchfolder>/libraries/ folder. You may need to create the libraries subfolder if its your first library. Restart the IDE.
+
+For information on installing libraries, see: http://www.arduino.cc/en/Guide/Libraries
