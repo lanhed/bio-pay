@@ -36,9 +36,13 @@ module.exports = class GUIServer {
 	//
 	setupApp() {
 		let app = this.app;
-
+		
 		app.set('views', path.join(__dirname, 'views'));
-		app.engine('hbs',expressHbs({extname:'hbs', defaultLayout:'main'}));
+		app.engine('hbs',expressHbs({
+			extname:'hbs', 
+			defaultLayout:'main', 
+			layoutsDir: path.join(__dirname, 'views/layouts')
+		}));
 		app.set('view engine', 'hbs');
 
 		//// Sass
