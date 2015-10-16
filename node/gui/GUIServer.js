@@ -3,6 +3,7 @@
 const path = require('path');
 
 const express = require('express');
+const expressHbs = require('express3-handlebars');
 const sassMiddleware = require('node-sass-middleware');
 
 const baseConfig = {
@@ -37,7 +38,8 @@ module.exports = class GUIServer {
 		let app = this.app;
 
 		app.set('views', path.join(__dirname, 'views'));
-		app.set('view engine', 'jade');
+		app.engine('hbs',expressHbs({extname:'hbs', defaultLayout:'main'}));
+		app.set('view engine', 'hbs');
 
 		//// Sass
 		app.use(sassMiddleware({
@@ -56,7 +58,7 @@ module.exports = class GUIServer {
 		let app = this.app;
 
 		app.get('/', (req, res) => {
-			res.render('index');
+			res.render('home');
 		});
 		app.get('/payment', (req, res) => {
 			res.render('payment');
