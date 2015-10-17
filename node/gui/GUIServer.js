@@ -3,7 +3,7 @@
 const path = require('path');
 
 const express = require('express');
-const expressHbs = require('express3-handlebars');
+const expressHbs = require('express-handlebars');
 const sassMiddleware = require('node-sass-middleware');
 
 const baseConfig = {
@@ -36,7 +36,7 @@ module.exports = class GUIServer {
 	//
 	setupApp() {
 		let app = this.app;
-		
+
 		app.set('views', path.join(__dirname, 'views'));
 		app.engine('hbs',expressHbs({
 			extname:'hbs', 
