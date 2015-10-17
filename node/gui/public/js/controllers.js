@@ -9,6 +9,10 @@ app.config(function($interpolateProvider) {
 
 app.controller('PaymentSelectionController', function($scope,$http) {
 	$http.get('data/store-config.json').success(function(data) {
-		$scope.paymentTypes = data;
+		if (data.paymentTypes.length > 1) {
+			$scope.paymentTypes = data.paymentTypes;
+		} else {
+			// route to next view
+		}
 	});
 });
