@@ -1,8 +1,6 @@
 <section id="choose-payment" ng-controller="PaymentSelectionController">
 	<h1>Choose payment type</h1>
 	<ul class="payment-list">
-		<li ng-repeat="payment in paymentTypes" data-payment="{{payment.type}}">{{payment.name}}</li>
-		<!--li data-payment="bitcoin">Bitcoin</li>
-		<li data-payment="paypal">Paypal</li-->
+		<li ng-repeat="payment in paymentTypes" data-payment="{[{payment.type}]}">{[{payment.name}]}</li>
 	</ul>
 </section>

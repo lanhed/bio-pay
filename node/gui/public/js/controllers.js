@@ -8,7 +8,7 @@ app.config(function($interpolateProvider) {
 });
 
 app.controller('PaymentSelectionController', function($scope) {
-	$scope.paymentTypes:[
+	$scope.paymentTypes = [
 		{ type: 'credit-card', name: 'Credit Card' },
 		{ type: 'bitcoin', name: 'Blockchain Bitcoins'},
 		{ type: 'paypal', name: 'PayPal'}
