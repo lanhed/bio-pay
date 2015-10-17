@@ -7,10 +7,8 @@ app.config(function($interpolateProvider) {
   $interpolateProvider.endSymbol('}]}');
 });
 
-app.controller('PaymentSelectionController', function($scope) {
-	$scope.paymentTypes = [
-		{ type: 'credit-card', name: 'Credit Card' },
-		{ type: 'bitcoin', name: 'Blockchain Bitcoins'},
-		{ type: 'paypal', name: 'PayPal'}
-	]
-})
+app.controller('PaymentSelectionController', function($scope,$http) {
+	$http.get('data/store-config.json').success(function(data) {
+		$scope.paymentTypes = data;
+	});
+});
