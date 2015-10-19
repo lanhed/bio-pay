@@ -13,15 +13,20 @@ module.exports = class App {
 		this.gui = new GUIServer(this);
 	}
 
-	makePayment(type, amount, currency) {
-		if (!this.paymentService.isPaymentTypeSupported(type)) {
-			throw Error(`Payment type ${type} not supported.`);
-		}
+	getPaymentServices() {
+		return this.paymentService.getSupportedPaymentServices();
+	}
 
-		return Nfc.read(type)
-			.then(credentials => {
-				return this.paymentService.makePayment(credentials, amount, currency);
-			});
+	getExchangeRates(type) {
+		return this.paymentService.getExchangeRates(type);
+	}
+
+	readNfc(type) {
+		return this.Nfc.read(type);
+	}
+
+	makePayment(type, credentials, amount, currency) {
+		return this.paymentService.makePayment(credentials, amount, currency);
 	}
 };
 
