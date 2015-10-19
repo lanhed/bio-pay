@@ -75,19 +75,51 @@ module.exports = class GUIServer {
 	setupApi() {
 		let app = this.app;
 
-		app.get('/api/payment/:type', (req, res) => {
+		// Supported payment services
+		app.get('/api/services', (req, res) => {
+			res.json(this.paymentApp.getPaymentServices());
+		});
+
+		// Exchange rates
+		app.get('/api/exchange-rates', (req, res) => {
+			this.paymentApp.getExchangeRates()
+				.then(data => {
+					res.json(data);
+				})
+				.catch(error => { throw error; });
+		});
+
+		// Read nfc
+		app.get('/api/nfc/:type', (req, res) => {
 			const type = req.params.type;
+
+			if (!type) {
+				return res.status(400).end('Need to supply type.');
+			}
+
+			this.paymentApp.readNfc(type)
+				.then(data => {
+					res.json(data);
+				})
+				.catch(error => { throw error; });
+		});
+
+		// Payment
+		app.post('/api/payment/:type', (req, res) => {
+			const type = req.params.type;
+			const username = req.query.username;
+			const password = req.query.password;
 			const amount = req.query.amount;
 			const currency = req.query.currency;
 
-			if (!type || !amount || !currency) {
-				return res.status(400).end(`Need to supply type, amount > 0.0 and currency.`);
+			if (!type || !username || !password || !amount || !currency) {
+				return res.status(400).end(`Need to supply type, credentials, amount > 0.0 and currency.`);
 			}
 
-			this.paymentApp.makePayment(type, amount, currency)
+			this.paymentApp.makePayment(type, { username, password }, amount, currency)
 				.then((result) => {
 					console.log(result);
-					res.end(result);
+					res.json(result);
 				})
 				.catch((error) => { throw error; });
 		});

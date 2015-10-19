@@ -59,14 +59,14 @@ new GUIServer({
 		});
 	},
 
-	makePayment(credentials, amount, currency) {
+	makePayment(type, credentials, amount, currency) {
 		return new Promise((resolve, reject) => {
 			if (Math.random() < config.errorRate) {
 				return reject('Request was randomly rejected');
 			}
 
 			resolve({
-				message: 'Payment succesfull',
+				message: 'Payment successful',
 				amount,
 				currency
 			});
