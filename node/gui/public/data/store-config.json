@@ -1,0 +1,14 @@
+{
+	"paymentTypes" : [
+		{ 
+			"type":"credit-card", 
+			"name": "Credit Card" 
+		},{ 
+			"type": "bitcoin", 
+			"name": "Blockchain Bitcoins"
+		},{ 
+			"type": "paypal", 
+			"name": "PayPal"
+		}
+	]
+}
