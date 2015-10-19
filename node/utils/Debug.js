@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 
 
-let home = process.env[process.plattfrom === 'win32' ? 'USERPROFILE' : 'HOME'];
+let home = process.env[process.platform === 'win32' ? 'USERPROFILE' : 'HOME'];
 let dataRoot = path.join(home, '_nfc-pay');
 
 module.exports = {
