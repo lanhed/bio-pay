@@ -92,4 +92,4 @@ module.exports = class GUIServer {
 				.catch((error) => { throw error; });
 		});
 	}
-}
+};
