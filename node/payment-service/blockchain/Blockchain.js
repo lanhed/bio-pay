@@ -1,12 +1,14 @@
 'use strict';
 
+require('colors');
+
 const blockchain = require('blockchain.info');
 const ConfirmationServer = require('./ConfirmationServer');
 
 const baseConfig = {
 	receiveAddress: '',
 	apiCode: null,
-	callbackUrl: '',
+	callbackUrl: null,
 	serverPort: 8002
 };
 
@@ -14,17 +16,32 @@ module.exports = class Blockchain {
 	constructor(config) {
 		this.config = Object.assign({}, baseConfig, config);
 
-		// this.setupConfirmationServer();
+		if (!this.config.receiveAddress) {
+			throw Error('No receive address supplied to Blockchain');
+		}
+
+		if (!this.config.apiCode) {
+			console.warn('No api code supplied to Blockchain, will make requests without'.yellow);
+		}
+
+		if (this.config.callbackUrl) {
+			this.setupConfirmationServer();
+		} else {
+			console.warn('No callback url set up for Blockchain, wont listen for confirmations'.yellow);
+		}
+
 		this.setupReceiver();
 	}
 
 	setupReceiver() {
-		let callbackUrl = this.config.callbackUrl + ':' + this.config.serverPort;
+		let callbackUrl = this.config.callbackUrl ? this.config.callbackUrl + ':' + this.config.serverPort : null;
 
 		this.receiver = new blockchain.Receive(callbackUrl);
-		// this.receiver.listen(this.confirmationServer.server);
 		
-		console.log(`Set up receiver with callback url "${callbackUrl}"`);
+		if (this.confirmationServer) {
+			this.receiver.listen(this.confirmationServer.server);
+			console.log(`Set up receiver with callback url "${callbackUrl}"`.cyan);
+		}
 	}
 
 	setupConfirmationServer() {

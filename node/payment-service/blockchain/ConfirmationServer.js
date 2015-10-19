@@ -26,7 +26,7 @@ class ConfirmationServer extends EventEmitter {
 
 		server.listen(this.config.port);
 
-		console.log(`Started ${'ConfirmationServer'.yellow} listening on port=${this.config.port}`);
+		console.log(`Started ${'ConfirmationServer'.yellow} listening on port=${this.config.port}`.cyan);
 	}
 
 	onRequest(req, res) {

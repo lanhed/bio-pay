@@ -3,14 +3,20 @@
 const Blockchain = require('./blockchain/Blockchain');
 const _  = require('lodash');
 
+const baseConfig = {
+	bitcoins: null
+};
+
 module.exports = class PaymentService {
-	constructor() {
-		this.setupPaymentServices();
+	constructor(config) {
+		config = Object.assign({}, baseConfig, config);
+
+		this.setupPaymentServices(config);
 	}
 
-	setupPaymentServices() {
+	setupPaymentServices(config) {
 		this.paymentServices = {
-			bitcoins: new Blockchain()
+			bitcoins: new Blockchain(config.bitcoins)
 		};
 	}
 

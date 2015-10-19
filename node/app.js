@@ -1,17 +1,33 @@
 'use strict';
 
+require('colors');
+
 const PaymentService = require('./payment-service/PaymentService');
 const Nfc = require('./nfc/Nfc');
 const GUIServer = require('./gui/GUIServer');
 
+const Settings = require('./settings');
+
 module.exports = class App {
 
 	constructor() {
-		this.paymentService = new PaymentService();
-		this.nfc = new Nfc();
+		this.setupPaymentService();
+		this.setupNfc();
+		this.setupGui();
 
-		this.gui = new GUIServer(this);
+		console.log('*    App started   *'.rainbow.bgWhite);
+		console.log('~ Yaaaaaaaaaaaaaay ~'.rainbow.bgWhite);
 	}
+
+	setupPaymentService() {
+		let config = Settings.readJSON('payment-services');
+
+		this.paymentService = new PaymentService(config);
+	}
+
+	setupNfc() { this.nfc = new Nfc(); }
+	setupGui() { this.gui = new GUIServer(this); }
+
 
 	getPaymentServices() {
 		return this.paymentService.getSupportedPaymentServices();
@@ -22,11 +38,11 @@ module.exports = class App {
 	}
 
 	readNfc(type) {
-		return this.Nfc.read(type);
+		return this.nfc.read(type);
 	}
 
 	makePayment(type, credentials, amount, currency) {
-		return this.paymentService.makePayment(credentials, amount, currency);
+		return this.paymentService.makePayment(type, credentials, amount, currency);
 	}
 };
 
