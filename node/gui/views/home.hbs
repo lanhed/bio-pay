@@ -1,6 +1,6 @@
 <section id="payment-type" ng-controller="PaymentSelectionController">
 	<h1>Choose payment type</h1>
 	<ul class="payment-list">
-		<li ng-repeat="payment in paymentTypes" data-payment="{[{payment.type}]}">{[{payment.name}]}</li>
+		<li ng-repeat="payment in paymentTypes" data-payment="{[{payment.type}]}" ng-click="registerPaymentType(this.payment.type)">{[{payment.name}]}</li>
 	</ul>
 </section>

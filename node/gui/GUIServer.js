@@ -64,7 +64,7 @@ module.exports = class GUIServer {
 		app.get('/', (req, res) => {
 			res.render('home');
 		});
-		app.get('/payment', (req, res) => {
+		app.get('/payment/:type', (req, res) => {
 			res.render('payment');
 		});
 	}

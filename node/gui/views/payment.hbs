@@ -1,17 +1,17 @@
-<section id="payment-value">
-	<div class="output"><input class="value" type="number" min="0.00" step="0.01" value="0.00" /></span></div>
+<section id="payment-value" ng-controller="PaymentInputController">
+	<div class="output"><input ng-model="price" class="value" type="number" min="0.00" step="0.01" value="0.00" /></span></div>
 	<ul>
-		<li><button>1</button></li>
-		<li><button>2</button></li>
-		<li><button>3</button></li>
-		<li><button>4</button></li>
-		<li><button>5</button></li>
-		<li><button>6</button></li>
-		<li><button>7</button></li>
-		<li><button>8</button></li>
-		<li><button>9</button></li>
-		<li><button>.</button></li>
-		<li><button>0</button></li>
-		<li><button>></button></li>
+		<li><button ng-click="buttonPressHandler(1)">1</button></li>
+		<li><button ng-click="buttonPressHandler(2)">2</button></li>
+		<li><button ng-click="buttonPressHandler(3)">3</button></li>
+		<li><button ng-click="buttonPressHandler(4)">4</button></li>
+		<li><button ng-click="buttonPressHandler(5)">5</button></li>
+		<li><button ng-click="buttonPressHandler(6)">6</button></li>
+		<li><button ng-click="buttonPressHandler(7)">7</button></li>
+		<li><button ng-click="buttonPressHandler(8)">8</button></li>
+		<li><button ng-click="buttonPressHandler(9)">9</button></li>
+		<li><button ng-click="buttonPressHandler('.')">.</button></li>
+		<li><button ng-click="buttonPressHandler(0)">0</button></li>
+		<li><button ng-click="buttonPressHandler('>')">></button></li>
 	</ul>
 </section>
