@@ -1,36 +1,48 @@
+'use strict';
 
 const blockchain = require('blockchain.info');
-const http = require('http');
+const ConfirmationServer = require('./ConfirmationServer');
 
 const baseConfig = {
+	receiveAddress: '',
 	apiCode: null,
 	callbackUrl: '',
 	serverPort: 8002
 };
 
 module.exports = class Blockchain {
-	constructor() {
-		this.wallet = {
-			address: '14ZTswYdmX8BCPWdKnF3vh8a4P83rUfCKe'
-		};
+	constructor(config) {
+		this.config = Object.assign({}, baseConfig, config);
 
-		this.setupConfirmationServer();
+		// this.setupConfirmationServer();
 		this.setupReceiver();
 	}
 
 	setupReceiver() {
-		this.receiver = new blockchain.Receive(baseConfig.callbackUrl);
-		this.receiver.listen(this.confirmationServer);
+		let callbackUrl = this.config.callbackUrl + ':' + this.config.serverPort;
+
+		this.receiver = new blockchain.Receive(callbackUrl);
+		// this.receiver.listen(this.confirmationServer.server);
+		
+		console.log(`Set up receiver with callback url "${callbackUrl}"`);
 	}
 
 	setupConfirmationServer() {
-		let server = this.confirmationServer = http.createServer();
-		
-		server.on('request', (req, res) => {
-			res.end('*ok*');
+		this.confirmationServer = new ConfirmationServer({
+			port: this.config.serverPort
 		});
+	}
 
-		server.listen(baseConfig.serverPort);
+	getExchangeRates() {
+		return new Promise((resolve, reject) => {
+			blockchain.exchangeRates.getTicker((error, data) => {
+				if (error) {
+					return reject(error);
+				}
+
+				resolve(data);
+			});
+		});
 	}
 
 	makePayment(credentials, amount, currency) {
@@ -39,14 +51,14 @@ module.exports = class Blockchain {
 		// Transform currency into satoshi
 
 		return new Promise((resolve, reject) => {
-			this.receiver.create(this.wallet.address, (error, addressData) => {
+			this.receiver.create(this.config.receiveAddress, (error, addressData) => {
 				if (error) {
 					return reject(error);
 				}
 
 				wallet.send({
 					to: addressData.input_address,
-					amuont: amount
+					amount: amount
 				}, (error, data) => {
 					if (error) {
 						return reject(error);

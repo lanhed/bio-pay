@@ -1,6 +1,7 @@
 'use strict';
 
 const Blockchain = require('./blockchain/Blockchain');
+const _  = require('lodash');
 
 module.exports = class PaymentService {
 	constructor() {
@@ -13,8 +14,23 @@ module.exports = class PaymentService {
 		};
 	}
 
+	getSupportedPaymentServices() {
+		return _.map(this.paymentServices, (__, name) => name);
+	}
+
 	isPaymentTypeSupported(type) {
 		return !!this.paymentServices[type];
+	}
+
+
+	getExchangeRates(type) {
+		let service = this.paymentServices[type];
+
+		if (!service) {
+			throw Error('Unsupported payment type passed in to makePayment');		
+		}
+
+		return service.getExchangeRates(); 
 	}
 
 
