@@ -3,7 +3,6 @@
 const path = require('path');
 
 const express = require('express');
-const expressHbs = require('express-handlebars');
 const sassMiddleware = require('node-sass-middleware');
 
 const baseConfig = {
@@ -37,14 +36,6 @@ module.exports = class GUIServer {
 	setupApp() {
 		let app = this.app;
 
-		app.set('views', path.join(__dirname, 'views'));
-		app.engine('hbs',expressHbs({
-			extname:'hbs', 
-			defaultLayout:'main', 
-			layoutsDir: path.join(__dirname, 'views/layouts')
-		}));
-		app.set('view engine', 'hbs');
-
 		//// Sass
 		app.use(sassMiddleware({
 			src: path.join(__dirname, 'sass'),
@@ -60,14 +51,15 @@ module.exports = class GUIServer {
 	// 
 	setupRouting() {
 		let app = this.app;
-
+		let fileName = __dirname + '/public/views/index.html';
 		app.get('/', (req, res) => {
-			res.render('home');
+			res.sendFile(fileName,function (err) {
+				if (err) {
+					console.log(err);
+					res.status(err.status).end();
+				}
+			});
 		});
-
-		/*app.get('/payment/:type', (req, res) => {
-			res.render('payment');
-		});*/
 	}
 
 	//
