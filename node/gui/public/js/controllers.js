@@ -61,5 +61,6 @@ appControllers.controller('paymentInputController', ($scope) => {
 
 appControllers.controller('readNfcController', () => {
 	// visa animation när tag börjar skannas
-	// avbryt animation när tag skannats klart
+	// visa animation när tag skannats klart
+	// visa errormeddelande ifall något går fel
 });
