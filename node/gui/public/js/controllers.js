@@ -1,13 +1,15 @@
 'use strict';
+
 let appControllers = angular.module('mainController', []);
 
-appControllers.controller('mainController', ($scope,$http) => {
-	$http.get('data/store-config.json').success((data) => {
-		if (data.paymentTypes.length > 1) {
-			$scope.paymentTypes = data.paymentTypes;
+appControllers.controller('mainController', (dataService,$scope,$http) => {
+
+	dataService.async().then(function() {
+		let d = dataService.data();
+		if (d.paymentTypes.length > 1) {
+			$scope.paymentTypes = d.paymentTypes;
 		} else {
-			// only one payment type, no need to display the view, move on...
-			window.location.href="/#/payment/"+data.paymentTypes[0];
+			window.location.href="/#/payment/"+d.paymentTypes[0];
 		}
 	});
 });
@@ -21,8 +23,21 @@ appControllers.controller('paymentInputController', ($scope) => {
 	$scope.buttonPressHandler = (char) => {
 		if (char === '.') {
 			isDecimal = true;
-		} else if (char === 'x' || char === '<' || char === 'o') {
-			//
+		} else if (char === 'x') {
+			// cancel
+			// show alert/modal => 'Cancel payment? yes/no'
+		} else if (char === '<') {
+			// erase
+			// reset amount
+			isDecimal = false;
+			inputValue = 0;
+			inputDecimalValue = 0;
+			$scope.price = 0;
+			$scope.convertedPrice = 'SEK' + 0;
+		} else if (char === 'o') {
+			// send
+			// save amount
+			window.location.href="/#/read-nfc";
 		} else {
 			if (!isDecimal) {
 				inputValue *= 10;
@@ -31,7 +46,7 @@ appControllers.controller('paymentInputController', ($scope) => {
 			} else {
 				inputDecimalValue *= 10;
 				inputDecimalValue += char;
-				//inputDecimalValue / 100;
+
 				let outputDecimalValue = inputDecimalValue;
 				while(outputDecimalValue > 1) {
 					outputDecimalValue = outputDecimalValue / 10;
@@ -42,4 +57,9 @@ appControllers.controller('paymentInputController', ($scope) => {
 			$scope.convertedPrice = 'SEK ' + $scope.price * conversionRate;
 		}
 	};
+});
+
+appControllers.controller('readNfcController', () => {
+	// visa animation när tag börjar skannas
+	// avbryt animation när tag skannats klart
 });

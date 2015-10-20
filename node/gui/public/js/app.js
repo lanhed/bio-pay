@@ -26,9 +26,42 @@ app.config(($routeProvider) => {
 		.when('/payment/:type', {
 			templateUrl: 'views/payment.html',
 			controller: 'paymentInputController'
-		}).
-		otherwise({
+		})
+
+		.when('/read-nfc', {
+			templateUrl: 'views/read-nfc.html',
+			controller: 'readNfcController'
+		})
+
+		.otherwise({
 			redirectTo: '/'
 		});
 	}
 );
+
+app.factory('dataService', ($http, $q) => {
+	let deferred = $q.defer();
+	let data = [];
+	let paymentConfiguration = {
+		type:null,
+		value:0
+	};
+	let service = {};
+
+	service.async = () => {
+		$http.get('data/store-config.json').success((d) => {
+			data = d;
+			deferred.resolve();
+		});
+
+		return deferred.promise;
+	};
+
+	service.data = () => { return data; }
+	
+	service.currentPayment = (options) => {
+		//if option save
+	}
+
+	return service;
+});
