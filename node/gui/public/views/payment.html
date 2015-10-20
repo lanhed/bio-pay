@@ -1,5 +1,6 @@
-<section id="payment-value" ng-controller="PaymentInputController">
-	<div class="output"><input ng-model="price" class="value" type="number" min="0.00" step="0.01" value="0.00" /></span></div>
+<section id="payment-value" ng-controller="paymentInputController">
+	<div class="converted-output"><input ng-model="convertedPrice" class="value" type="text" value="SEK 0.00" readonly=""></div>
+	<div class="output"><input ng-model="price" class="value" type="text" value="0.00" /></span></div>
 	<ul>
 		<li><button ng-click="buttonPressHandler(1)">1</button></li>
 		<li><button ng-click="buttonPressHandler(2)">2</button></li>
@@ -10,8 +11,12 @@
 		<li><button ng-click="buttonPressHandler(7)">7</button></li>
 		<li><button ng-click="buttonPressHandler(8)">8</button></li>
 		<li><button ng-click="buttonPressHandler(9)">9</button></li>
+		<li><button ng-click="buttonPressHandler(0)" class="zero">0</button></li>
 		<li><button ng-click="buttonPressHandler('.')">.</button></li>
-		<li><button ng-click="buttonPressHandler(0)">0</button></li>
-		<li><button ng-click="buttonPressHandler('>')">></button></li>
+	</ul>
+	<ul class="nav">
+		<li><button ng-click="buttonPressHandler('x')" class="cancel">x</button></li>
+		<li><button ng-click="buttonPressHandler('<')" class="erase"><</button></li>
+		<li><button ng-click="buttonPressHandler('o')" class="confirm">o</button></li>
 	</ul>
 </section>

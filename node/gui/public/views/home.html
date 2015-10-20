@@ -1,0 +1,6 @@
+<section id="payment-type">
+	<h1>Choose payment type</h1>
+	<ul class="payment-list">
+		<li ng-repeat="payment in paymentTypes" data-payment="{[{payment.type}]}"><a href="/#/payment/{[{payment.type}]}">{[{payment.name}]}</a></li>
+	</ul>
+</section>

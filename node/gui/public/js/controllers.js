@@ -1,22 +1,7 @@
 'use strict';
+let appControllers = angular.module('mainController', []);
 
-let app = angular.module('app',[]);
-app.paymentConfiguration = {
-	type:null,
-	value:0
-};
-
-app.config(($interpolateProvider) => {
-	$interpolateProvider.startSymbol('{[{');
-	$interpolateProvider.endSymbol('}]}');
-});
-
-app.controller('PaymentSelectionController', ($scope,$http) => {
-	$scope.registerPaymentType = (type) => {
-		app.paymentConfiguration.type = type;
-		window.location.href="/#/payment/"+type;
-	};
-
+appControllers.controller('mainController', ($scope,$http) => {
 	$http.get('data/store-config.json').success((data) => {
 		if (data.paymentTypes.length > 1) {
 			$scope.paymentTypes = data.paymentTypes;
@@ -27,28 +12,34 @@ app.controller('PaymentSelectionController', ($scope,$http) => {
 	});
 });
 
-app.controller('PaymentInputController', ($scope) => {
+appControllers.controller('paymentInputController', ($scope) => {
 	let inputValue = 0;
 	let inputDecimalValue = 0;
 	let isDecimal = false;
-	let decimalSettings = app.paymentConfiguration.type === 'bitcoin' ? 10000 : 100;
+	let conversionRate = 1;
+	let decimalSettings = app.paymentConfiguration.type === 'bitcoin' ? 5 : 2;
 	$scope.buttonPressHandler = (char) => {
 		if (char === '.') {
 			isDecimal = true;
-		} else if (char === '>') {
-			// send input value
+		} else if (char === 'x' || char === '<' || char === 'o') {
+			//
 		} else {
 			if (!isDecimal) {
 				inputValue *= 10;
 				inputValue += char;
 				$scope.price = inputValue;
 			} else {
-				if (inputDecimalValue < decimalSettings) {
-					inputDecimalValue *= 10;
-					inputDecimalValue += char;
-					$scope.price = inputValue + inputDecimalValue / 100;
+				inputDecimalValue *= 10;
+				inputDecimalValue += char;
+				//inputDecimalValue / 100;
+				let outputDecimalValue = inputDecimalValue;
+				while(outputDecimalValue > 1) {
+					outputDecimalValue = outputDecimalValue / 10;
 				}
+				$scope.price = (inputValue + outputDecimalValue).toFixed(decimalSettings);
 			}
+
+			$scope.convertedPrice = 'SEK ' + $scope.price * conversionRate;
 		}
 	};
 });
