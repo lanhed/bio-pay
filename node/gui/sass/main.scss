@@ -32,7 +32,7 @@ a {
 }
 
 #payment-value {
-	.output {
+	.output,.converted-output {
 		height: 80px;
 		margin: 9px 8px 15px 3px;
 
@@ -46,13 +46,26 @@ a {
 			width: 100%;
 		}
 	}
+	.converted-output{
+		height: 40px;
+		margin: 9px 8px 15px 3px;
+
+		.value{
+			font-size: 20px;
+			height: 40px;
+			line-height: 40px;
+		}
+	}
 	ul {
 		list-style: none;
 		padding: 0;
-		margin: 3px;
+		margin: 3px 0 3px 3px;
+		width: 74%;
+		display: inline-block;
+		float: left;
 
 		li {
-			display:inline;
+			display:inline-block;
 
 			button {
 				display: inline-block;
@@ -61,7 +74,24 @@ a {
 				border: 1px solid;
 				margin-bottom: 4px;
 				font-size: 30px;
+
+				&.zero {
+					margin-left: 74px;
+				}
+				&.cancel {
+					background-color: red;
+				}
+				&.erase {
+					background-color: yellow;
+				}
+				&.confirm {
+					background-color: green;
+				}
 			}
+		}
+
+		&.nav {
+			width: 23%;
 		}
 	}
 }
