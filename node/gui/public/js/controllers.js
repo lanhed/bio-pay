@@ -1,6 +1,6 @@
 'use strict';
 
-let appControllers = angular.module('mainController', []);
+let appControllers = angular.module('appControllers', []);
 
 appControllers.controller('mainController', (dataService,$scope,$http) => {
 
