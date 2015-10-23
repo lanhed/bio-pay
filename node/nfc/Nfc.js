@@ -2,6 +2,8 @@
 
 // Debug
 const Debug = require('../utils/Debug');
+// https://github.com/voodootikigod/node-serialport
+// const SerialPort = require('serialport');
 
 
 //
