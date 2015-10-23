@@ -1,4 +1,9 @@
 body {
+	font-family: Verdana, Helvetica, Arial, sans-serif;
+}
+
+h1, h2, h3, h4, h5 {
+	font-family: 'Arial Rounded MT Bold', 'Helvetica Rounded', Arial, sans-serif;
 }
 
 a {
@@ -92,6 +97,146 @@ a {
 
 		&.nav {
 			width: 23%;
+		}
+	}
+}
+
+#read-nfc {
+	.read-tag {
+		position: relative;
+		padding: 30px;
+		text-align: center;
+
+		.green-blur {
+			display:none;
+		}
+		
+		.green-blur,
+		.blue-blur {
+
+			position: absolute;
+			top: 178px;
+			left: 73px;
+			
+
+			@keyframes bounce-blur {
+				50%{
+					transform: scale(1);
+					opacity:1.0;
+				}
+				75% {
+					transform: scale(1.2);
+					opacity:0.5;
+				}
+				100% {
+					transform: scale(1);
+					opacity:1.0;
+				}
+			}
+
+			img {
+				width:100%;
+			}
+		}
+
+		&.animate {
+			.green-blur,
+			.blue-blur {
+				animation-name: bounce-blur;
+				animation-duration: 4s;
+				animation-iteration-count: infinite;
+				animation-timing-function: ease-out;
+			}
+		}
+
+		svg {
+			position: absolute;
+			top: 145px;
+			width: 275px;
+			left: 15px;
+
+			.overlapping-fill {
+				fill:#FFFFFF;
+			}
+			.chip {
+				fill:#DC0000;
+			}
+			.signal-circle-1,
+			.signal-circle-2,
+			.signal-circle-3,
+			.signal-circle-4 {
+				fill:none;
+				stroke:#1A89C1;
+				stroke-width:5.2163;
+				stroke-miterlimit:10;
+				stroke-opacity:0;
+			}
+			.signal-circle-2 { stroke-opacity:0.75; }
+			.signal-circle-3 { stroke-opacity:0.50; }
+			.signal-circle-4 { stroke-opacity:0.25; }
+		}
+
+
+		@keyframes ring-pulse {
+			50% {
+				stroke-opacity:0;
+				stroke-width:5;
+			}
+			70% {
+				stroke-opacity:0.6;
+				stroke-width:10;
+			}
+			85% {
+				stroke-opacity:0;
+				stroke-width:5;
+			}
+		}
+
+		&.read {
+			svg {
+				.signal-circle-2 { stroke-opacity:0; }
+				.signal-circle-3 { stroke-opacity:0; }
+				.signal-circle-4 { stroke-opacity:0; }
+				
+
+				.signal-circle-2 { 
+					animation-delay: 0.5s;
+				}
+				.signal-circle-3 { 
+					animation-delay: 1s; 
+				}
+				.signal-circle-4 { 
+					animation-delay: 1.5s;
+				}
+				
+				.signal-circle-2,
+				.signal-circle-3,
+				.signal-circle-4 {
+					animation-name:ring-pulse;
+					animation-duration:4s;
+					animation-iteration-count: infinite;
+					animation-timing-function: ease-out
+				}
+			}
+		}
+
+		&.done {
+			.green-blur {
+				display:block;
+			}
+			.blue-blur {
+				display:none;
+			}
+			svg {
+				.signal-circle-2 {
+					stroke:#37d158;
+					stroke-width:10;
+				}
+				.signal-circle-3,
+				.signal-circle-4 {
+					display:none;
+				}
+			}
 		}
 	}
 }

@@ -33,6 +33,16 @@ app.config(($routeProvider) => {
 			controller: 'readNfcController'
 		})
 
+		.when('/confirm',{
+			templateUrl: 'views/confirmation.html',
+			controller: 'confirmationController'
+		})
+
+		.when('/error',{
+			templateUrl: 'views/payment-error.html',
+			controller: 'paymentErrorController'
+		})
+
 		.otherwise({
 			redirectTo: '/'
 		});
