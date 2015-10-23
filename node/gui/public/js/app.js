@@ -1,3 +1,4 @@
+/* globals angular */
 'use strict';
 
 let app = angular.module('app',[
@@ -67,11 +68,11 @@ app.factory('dataService', ($http, $q) => {
 		return deferred.promise;
 	};
 
-	service.data = () => { return data; }
+	service.data = () => { return data; };
 	
 	service.currentPayment = (options) => {
 		//if option save
-	}
+	};
 
 	return service;
 });
