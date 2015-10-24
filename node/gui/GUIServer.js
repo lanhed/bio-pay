@@ -4,6 +4,7 @@ const path = require('path');
 
 const express = require('express');
 const sassMiddleware = require('node-sass-middleware');
+const browserify = require('browserify-middleware');
 
 const baseConfig = {
 	public: 'public',
@@ -42,6 +43,11 @@ module.exports = class GUIServer {
 			dest: path.join(__dirname, this.config.public),
 			debug: true
 		}));
+
+		// Browserify
+		browserify.settings({});
+		app.get('/main.js', browserify(path.join(__dirname, 'js/main.js')));
+
 		//// Static
 		app.use(express.static(path.join(__dirname, this.config.public)));
 	}

@@ -1,0 +1,5 @@
+{
+	"node": false,
+	"browserify": true,
+	"browser": true
+}
