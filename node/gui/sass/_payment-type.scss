@@ -1,0 +1,29 @@
+//
+// Payment type
+//
+#payment-type {
+	
+	.payment-list {
+		margin: 0;
+		padding: 0;
+
+		li {
+			list-style: none;
+			height: 45px;
+			border: 1px solid;
+			margin-bottom: 5px;
+			text-align: center;
+			white-space: nowrap;
+			line-height: 45px;
+			background-color: #f1f1f1;
+
+			a {
+				display: inherit;
+				color: #000;
+				text-decoration: none;
+				text-transform: uppercase;
+			}
+
+		}
+	}
+}
