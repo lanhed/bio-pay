@@ -283,7 +283,7 @@ void loop(void) {
       defaultState = START;
       break;
     case HELP:
-      Serial.println(F("Help info commands:\nSTART   'S'\nREAD    'R'\nWRITE   'W'\nHELP    'H'"));
+      Serial.println(F("Help info commands:\nSTART   'S'\nREAD    'R'\nWRITE   'W'\nBITCOINS  'B'\nHELP    'H'"));
       state = defaultState;
       stateMenu = 'H';
 
