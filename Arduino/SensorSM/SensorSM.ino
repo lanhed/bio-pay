@@ -55,7 +55,7 @@ void setup(void) {
   parameters = "";
 
 
-  Serial.println("Ready,Waiting for instruction ...");
+  Serial.print("#R");
 }
 
 
@@ -172,10 +172,12 @@ void ReadBtc()
       //Serial.print("\nThis NFC Tag contains an NDEF Message with ");
       //Serial.print(message.getRecordCount());
       //Serial.print(" NDEF Record");
+      /*
       if (message.getRecordCount() != 1) {
         Serial.print("s");
       }
-      //Serial.println(".");
+      */
+      Serial.println("#P");
 
       // cycle through the records, printing some info from each
       int recordCount = message.getRecordCount();
@@ -205,12 +207,13 @@ void ReadBtc()
           payloadAsString += (char)payload[c];
         }
 
+        //TypeMod = payloadAsString.substring(0, payloadAsString.indexOf(':'));
 
-        TypeMod = payloadAsString.substring(0, payloadAsString.indexOf(':'));
-        payloadAsString = payloadAsString.substring(TypeMod.length() + 1);
-        Serial.print(TypeMod);
-        if(TypeMod == "BT")
-        Serial.print(payloadAsString);
+        //TypeMod = payloadAsString.substring(0, payloadAsString.indexOf(':'));
+        payloadAsString = payloadAsString.substring(1);
+        //Serial.print(TypeMod);
+        //if(TypeMod == "BT")
+        Serial.println(payloadAsString);
 
         // id is probably blank and will return ""
         String uid = record.getId();
@@ -233,17 +236,19 @@ void Writenfc() {
 
   Serial.println("\nPlace a formatted chip on the reader.");
   if (nfc.tagPresent()) {
+
+    Serial.println("#P");
     NdefMessage message = NdefMessage();
     message.addUriRecord("BTC:f5aeec40-d474-4376-a863-2bcfee742c37,pelota12345");    
-    message.addUriRecord("PN:840326-XXXX");
-    message.addUriRecord("EMAIL:jjtara@gmail.com");        
+    //message.addUriRecord("PN:840326-XXXX");
+    //message.addUriRecord("EMAIL:jjtara@gmail.com");        
     //message.addUriRecord("http://arduino.cc");
     //message.addTextRecord("Goodbye, Arduino!");
     boolean success = nfc.write(message);
     if (success) {
-      Serial.println("Success");
+      Serial.println("#S");
     } else {
-      Serial.println("Write failed");
+      Serial.println("#F1");
     }
   }
   delay(3000);
@@ -285,20 +290,20 @@ void loop(void) {
       break;
 
     case WRITE:
-      Serial.println("\nWaiting for an nfc ...");
+      //Serial.println("\nWaiting for an nfc ...");
       Writenfc();
       state = defaultState;
       stateMenu = 'W';
-      Serial.println("Done!! Ready,Waiting for instruction ...");
+      Serial.println("#R");
       break;
 
     case READ:
 
-      Serial.println("\nWaiting for an nfc ...");
+      //Serial.println("\nWaiting for an nfc ...");
       Readnfc();
       state = defaultState;
       stateMenu = 'R';
-      Serial.println("Done!!Ready  Waiting for instruction ...");
+      Serial.println("#R");
       break;
 
     case BITCOINS:
@@ -308,7 +313,7 @@ void loop(void) {
       ReadBtc();
       state = defaultState;
       stateMenu = 'B';
-      //Serial.println("Done!!Ready  Waiting for instruction ...");
+      Serial.println("#R");
       break;
          
 
