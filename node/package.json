@@ -19,6 +19,7 @@
     "express": "^4.13.3",
     "jquery": "^2.1.4",
     "lodash": "^3.10.1",
-    "node-sass-middleware": "^0.9.6"
+    "node-sass-middleware": "^0.9.6",
+    "serialport": "^2.0.2"
   }
 }
