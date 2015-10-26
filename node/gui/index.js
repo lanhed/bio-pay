@@ -10,7 +10,11 @@ new GUIServer({
 	// Dummy responds to API
 
 	getPaymentServices() {
-		return ['blockchain'];
+		
+		return [{
+			type: 'bitcoins',
+			name: 'Blockchain Bitcoins'
+		}];
 	},
 
 	getExchangeRates() {

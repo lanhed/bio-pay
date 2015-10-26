@@ -1,18 +1,23 @@
 /* jshint browser:true */
 'use strict';
 
+const api = require('../utils/api');
+const navigation = require('../utils/navigation');
+
 /**
  * MainController
  */
-module.exports = function(dataService, $scope, $http) {
-	dataService.async()
-		.then(() => {
-			let data = dataService.data();
+module.exports = function($scope, $http) {
+	api.getJSON($http, 'services')
+		.then((res) => {
+			let data = res.data;
 
-			if (data.paymentTypes.length > 1) {
-				$scope.paymentTypes = data.paymentTypes;
+			if (data.length > 1) {
+				$scope.paymentTypes = data;
 			} else {
-				window.location.href = "/#/payment/" + data.paymentTypes[0];
+				navigation.navigate('payment', {
+					type: data[0].type
+				});
 			}
 		});
 };

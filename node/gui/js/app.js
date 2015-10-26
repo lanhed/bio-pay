@@ -1,7 +1,6 @@
 'use strict';
 
 var angular = require('angular');
-
 require('angular-route');
 
 // Controllers
@@ -13,10 +12,10 @@ let app = angular.module('app',[
 	'appControllers'
 ]);
 
-app.paymentConfiguration = {
+/*app.paymentConfiguration = {
 	type:null,
 	value:0
-};
+};*/
 
 app.config(($interpolateProvider) => {
 	$interpolateProvider.startSymbol('{[{');
@@ -31,7 +30,7 @@ app.config(($routeProvider) => {
 			controller: 'mainController'
 		})
 
-		.when('/payment/:type', {
+		.when('/payment', {
 			templateUrl: 'views/payment.html',
 			controller: 'paymentInputController'
 		})
@@ -57,13 +56,13 @@ app.config(($routeProvider) => {
 	}
 );
 
-app.factory('dataService', ($http, $q) => {
+/*app.factory('dataService', ($http, $q) => {
 	let deferred = $q.defer();
 	let data = [];
-	/*let paymentConfiguration = {
+	let paymentConfiguration = {
 		type:null,
 		value:0
-	};*/
+	};
 	let service = {};
 
 	service.async = () => {
@@ -77,11 +76,11 @@ app.factory('dataService', ($http, $q) => {
 
 	service.data = () => { return data; };
 	
-	/*service.currentPayment = (options) => {
+	service.currentPayment = (options) => {
 		//if option save
-	};*/
+	};
 
 	return service;
 });
-
+*/
 module.exports = app;

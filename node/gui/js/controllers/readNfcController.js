@@ -3,7 +3,18 @@
 
 var $ = require('jquery');
 
+var navigation = require('../utils/navigation');
+var query = require('../utils/query');
+
 module.exports = function() {
+	
+	let data = {
+		type: query.getQuery('type'),
+		amount: query.getQuery('amount'),
+		currency: query.getQuery('currency')
+	};
+
+	
 	let i = 0;
 	let el = $('#read-nfc').find('.read-tag');
 	let header = el.find('h2');
@@ -18,7 +29,7 @@ module.exports = function() {
 			header.html('Reading complete, processing payment.');
 		} else {
 			clearInterval(interval);
-			window.location.href="/#/confirm";
+			navigation.navigate('confirm');
 		}
 
 		i++;

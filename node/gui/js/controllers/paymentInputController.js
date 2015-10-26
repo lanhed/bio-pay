@@ -1,6 +1,9 @@
 /* jshint browser:true */
 'use strict';
 
+const navigation = require('../utils/navigation');
+const query = require('../utils/query');
+
 /**
  * Payment Input Controller
  * @param  {[type]} $scope [description]
@@ -13,6 +16,8 @@ module.exports = function($scope) {
 	let conversionRate = 1;
 	// let decimalSettings = app.paymentConfiguration.type === 'bitcoin' ? 5 : 2;
 	let decimalSettings = 5;
+
+	let type = query.getQuery('type');
 
 	$scope.buttonPressHandler = (char) => {
 		if (char === '.') {
@@ -31,7 +36,11 @@ module.exports = function($scope) {
 		} else if (char === 'o') {
 			// send
 			// save amount
-			window.location.href = "/#/read-nfc";
+			navigation.navigate('read-nfc', {
+				type: type,
+				amount: $scope.price,
+				currency: 'TBD'
+			});
 		} else {
 			if (!isDecimal) {
 				inputValue *= 10;

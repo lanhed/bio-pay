@@ -103,7 +103,15 @@ module.exports = class GUIServer {
 				.catch(error => { throw error; });
 		});
 
-		// Payment
+		/**
+		 * Payment
+		 * 
+		 * Queries (required):
+		 * 		username
+		 * 		password
+		 * 		amount
+		 * 		currency
+		 */
 		app.post('/api/payment/:type', (req, res) => {
 			const type = req.params.type;
 			const username = req.query.username;
