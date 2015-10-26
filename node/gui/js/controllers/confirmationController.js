@@ -6,5 +6,5 @@ const navigation = require('../utils/navigation');
 module.exports = function() {
 	setTimeout(() => {
 		navigation.navigate('/');
-	}, 1500);
+	}, 4000);
 };

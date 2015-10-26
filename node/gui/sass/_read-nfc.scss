@@ -40,7 +40,7 @@
 			}
 		}
 
-		&.animate {
+		&.ready {
 			.green-blur,
 			.blue-blur {
 				animation-name: bounce-blur;
@@ -93,7 +93,7 @@
 			}
 		}
 
-		&.read {
+		&.reading {
 			svg {
 				.signal-circle-2 { stroke-opacity:0; }
 				.signal-circle-3 { stroke-opacity:0; }
@@ -121,7 +121,7 @@
 			}
 		}
 
-		&.done {
+		&.payment {
 			.green-blur {
 				display:block;
 			}

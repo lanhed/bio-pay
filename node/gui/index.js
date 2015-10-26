@@ -1,6 +1,7 @@
 'use strict';
 
 const GUIServer = require('./GUIServer');
+const EventEmitter = require('events').EventEmitter;
 
 const config = {
 	errorRate: 0.1
@@ -50,7 +51,23 @@ new GUIServer({
 	},
 
 	readNfc(type) {
-		return new Promise((resolve, reject) => {
+		let process = Object.assign({}, EventEmitter.prototype);
+
+		setTimeout(() => {
+			process.emit('reading');
+		}, 2000);
+
+		setTimeout(() => {
+			process.emit('done', {
+				type,
+				username: 'user',
+				password: 'pass'
+			});
+		}, 6000);
+
+		return process;
+
+		/*return new Promise((resolve, reject) => {
 			if (Math.random() < config.errorRate) {
 				return reject('Request was randomly rejected');
 			}
@@ -60,7 +77,7 @@ new GUIServer({
 				username: 'user',
 				password: 'pass'
 			});
-		});
+		});*/
 	},
 
 	makePayment(type, credentials, amount, currency) {

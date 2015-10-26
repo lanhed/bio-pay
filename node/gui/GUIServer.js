@@ -1,10 +1,14 @@
 'use strict';
 
 const path = require('path');
+const http = require('http');
+
+const _ = require('lodash');
 
 const express = require('express');
 const sassMiddleware = require('node-sass-middleware');
 const browserify = require('browserify-middleware');
+const socketIo = require('socket.io');
 
 const baseConfig = {
 	public: 'public',
@@ -23,13 +27,32 @@ module.exports = class GUIServer {
 		this.config = Object.assign({}, baseConfig, config);
 
 		this.app = express();
+		this.server = http.Server(this.app);
 
 		this.setupApp();
 		this.setupRouting();
 		this.setupApi();
+		this.setupSocketIO();
 
-		this.app.listen(this.config.port);
+		this.server.listen(this.config.port);
 	}
+
+	//
+	// Socket IO
+	//
+	setupSocketIO() {
+		this.io = socketIo(this.server);
+	}
+
+	broadcastSocketMessage(messageType, data) {
+		let io = this.io;
+		let sockets = io.sockets.sockets;
+
+		_.each(sockets, (socket) => {
+			socket.emit(messageType, data);
+		});
+	}
+
 
 	//
 	// Setup
@@ -96,11 +119,20 @@ module.exports = class GUIServer {
 				return res.status(400).end('Need to supply type.');
 			}
 
-			this.paymentApp.readNfc(type)
+			let process = this.paymentApp.readNfc(type);
+
+			process.on('reading', () => {
+				this.broadcastSocketMessage('nfc.reading');
+			});
+			process.on('done', (data) => {
+				res.json(data);
+			});
+
+			/*this.paymentApp.readNfc(type)
 				.then(data => {
 					res.json(data);
 				})
-				.catch(error => { throw error; });
+				.catch(error => { throw error; });*/
 		});
 
 		/**
@@ -120,6 +152,7 @@ module.exports = class GUIServer {
 			const currency = req.query.currency;
 
 			if (!type || !username || !password || !amount || !currency) {
+				console.error(req.query);
 				return res.status(400).end(`Need to supply type, credentials, amount > 0.0 and currency.`);
 			}
 

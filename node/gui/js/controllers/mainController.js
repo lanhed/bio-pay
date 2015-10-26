@@ -8,7 +8,7 @@ const navigation = require('../utils/navigation');
  * MainController
  */
 module.exports = function($scope, $http) {
-	api.getJSON($http, 'services')
+	api.get($http, 'services')
 		.then((res) => {
 			let data = res.data;
 

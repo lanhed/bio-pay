@@ -1,23 +1,14 @@
 'use strict';
 
+// const query = require('./query');
+let payment = require('../payment');
+
 module.exports = {
-
-	getQueryStr(data) {
-		let queries = [];
-
-		if (data) {
-			for (let key in data) {
-				if (!data.hasOwnProperty(key)) continue;
-
-				queries.push(`${key}=${data[key]}`);
-			}
-		}
-
-		return queries.join('&');
-	},
-
 	navigate(screen, data) {
-		let queryStr = this.getQueryStr(data);
-		window.location.href = (queryStr !== '' ? '?' + queryStr : '') + '#/' + screen;
+		// let queryStr = query.getQueryString(data);
+		// window.location.href = (queryStr !== '' ? '?' + queryStr : '') + '#/' + screen;
+
+		payment.active = data;
+		window.location.href = '/#/' + screen;
 	}
 };

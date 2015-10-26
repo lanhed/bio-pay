@@ -1,6 +1,22 @@
 'use strict';
 
+let payment = require('../payment');
+
 module.exports = {
+	getQueryString: function(data) {
+		let queries = [];
+
+		if (data) {
+			for (let key in data) {
+				if (!data.hasOwnProperty(key)) continue;
+
+				queries.push(`${key}=${data[key]}`);
+			}
+		}
+
+		return queries.join('&');
+	},
+
 	/**
 	 * Parse a query string and turn in to object where key is queryName and value is queryValue or 'true' if no value specified.
 	 *
@@ -36,8 +52,10 @@ module.exports = {
 	 * @return {String/undefined}   Returns the value as a string or undefined if not found.
 	 */
 	getQuery: function(queryName) {
-		var queries = this.parseQuery(window.location.search.substr(1));
+		/*var queries = this.parseQuery(window.location.search.substr(1));
 
-		return queries[queryName];
+		return queries[queryName];*/
+
+		return payment.active ? payment.active[queryName] : null;
 	}
 };
