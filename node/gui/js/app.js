@@ -56,6 +56,8 @@ app.config(($routeProvider) => {
 	}
 );
 
+app.factory('dataService', () => require('./services/dataService'));
+
 /*app.factory('dataService', ($http, $q) => {
 	let deferred = $q.defer();
 	let data = [];

@@ -2,14 +2,12 @@
 'use strict';
 
 const navigation = require('../utils/navigation');
-const query = require('../utils/query');
+// const query = require('../utils/query');
 
 /**
  * Payment Input Controller
- * @param  {[type]} $scope [description]
- * @return {[type]}        [description]
  */
-module.exports = function($scope) {
+module.exports = function($scope, dataService) {
 	let inputValue = 0;
 	let inputDecimalValue = 0;
 	let isDecimal = false;
@@ -17,7 +15,8 @@ module.exports = function($scope) {
 	// let decimalSettings = app.paymentConfiguration.type === 'bitcoin' ? 5 : 2;
 	let decimalSettings = 5;
 
-	let type = query.getQuery('type');
+	// let type = query.getQuery('type');
+	let type = dataService.get('type');
 
 	$scope.buttonPressHandler = (char) => {
 		if (char === '.') {
