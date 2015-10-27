@@ -9,6 +9,6 @@ module.exports = {
 		// window.location.href = (queryStr !== '' ? '?' + queryStr : '') + '#/' + screen;
 
 		payment.active = data;
-		window.location.href = '/#/' + screen;
+		window.location = '/#/' + screen;
 	}
 };

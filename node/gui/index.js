@@ -82,15 +82,18 @@ new GUIServer({
 
 	makePayment(type, credentials, amount, currency) {
 		return new Promise((resolve, reject) => {
-			if (Math.random() < config.errorRate) {
-				return reject('Request was randomly rejected');
-			}
+			setTimeout(() => {
+				if (Math.random() < config.errorRate) {
+					return reject('Request was randomly rejected');
+				}
 
-			resolve({
-				message: 'Payment successful',
-				amount,
-				currency
-			});
+				resolve({
+					message: 'Payment successful',
+					amount,
+					currency
+				});
+			}, 2000);
+
 		});
 	}
 });

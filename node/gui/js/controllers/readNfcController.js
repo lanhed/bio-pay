@@ -17,6 +17,7 @@ socket.on('nfc.reading', () => {
 
 function setUIState(state) {
 	let $el = $('#read-nfc').find('.read-tag');
+	let $header = $el.find('h2');
 
 	$el.removeClass('ready reading payment');
 
@@ -26,9 +27,11 @@ function setUIState(state) {
 			break;
 		case 'reading':
 			$el.addClass('reading');
+			$header.html('Hold still');
 			break;
 		case 'payment':
 			$el.addClass('payment');
+			$header.html('Reading complete, processing payment.');
 			break;
 	}
 }
