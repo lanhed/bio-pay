@@ -68,19 +68,11 @@ module.exports = class Nfc {
 	// 
 	onData(data) {
 		console.info(`${data}`.cyan);
-
-		/*if (this.nfcProcess) {
-			this.nfcProcess.update(data);
-		}*/
 	}
 
 	onError(error) {
 		console.log('Error from serialport'.cyan);
 		console.error(error);
-
-		/*if (this.nfcProcess) {
-			this.nfcProcess.reject(error);
-		}*/
 	}
 
 	onOpen() {
@@ -92,28 +84,22 @@ module.exports = class Nfc {
 	}
 
 
-
 	createProcess(message) {
 		if (this.nfcProcess) {
 			throw 'Another process already active';
 		}
 
-		let nfcProcess = this.nfcProcess = new NfcProcess(this.connection, message);
+		this.nfcProcess = new NfcProcess(this.connection, message);
 		
 		let destroy = () => {
 			this.nfcProcess.destroy();
 			this.nfcProcess = null;
 		};
-		nfcProcess
+		this.nfcProcess
 			.then(destroy)
 			.catch(destroy);
 		
-		return nfcProcess;
-	}
-
-
-	_write(message) {
-		this.serialport.write(message + this.config.endCharacter);
+		return this.nfcProcess;
 	}
 
 
@@ -136,10 +122,6 @@ module.exports = class Nfc {
 			throw 'Connection to nfc-reader isn\t open yet';
 		}
 
-		let nfcProcess = this.createProcess(message);
-
-		// this._write(message);
-
-		return nfcProcess;
+		return this.createProcess(message);
 	}
 };
