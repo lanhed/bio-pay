@@ -11,6 +11,7 @@ setTimeout(() => {
 			console.log('result', result);
 		})
 		.catch(error => {
-			console.log('Catched', error);
+			console.log('Catched');
+			console.error(error);
 		});
-}, 2000);
+}, 6000);

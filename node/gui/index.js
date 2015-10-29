@@ -52,18 +52,29 @@ new GUIServer({
 
 	readNfc(type) {
 		let process = Object.assign({}, EventEmitter.prototype);
+		process.then = (cb) => {
+			setTimeout(() => {
+				cb({
+					type,
+					username: 'user',
+					password: 'pass'
+				});
+			}, 5000);
+			return process;
+		};
+		process.catch = () => { return process; };
 
 		setTimeout(() => {
-			process.emit('reading');
+			process.emit('processing');
 		}, 2000);
 
-		setTimeout(() => {
+		/*setTimeout(() => {
 			process.emit('done', {
 				type,
 				username: 'user',
 				password: 'pass'
 			});
-		}, 6000);
+		}, 6000);*/
 
 		return process;
 

@@ -11,7 +11,7 @@ module.exports = function($scope, dataService) {
 	let inputValue = 0;
 	let inputDecimalValue = 0;
 	let isDecimal = false;
-	let conversionRate = 1;
+	let conversionRate = 0.0035;
 	// let decimalSettings = app.paymentConfiguration.type === 'bitcoin' ? 5 : 2;
 	let decimalSettings = 5;
 
@@ -31,14 +31,14 @@ module.exports = function($scope, dataService) {
 			inputValue = 0;
 			inputDecimalValue = 0;
 			$scope.price = 0;
-			$scope.convertedPrice = 'SEK' + 0;
+			$scope.convertedPrice = 'BTC ' + 0;
 		} else if (char === 'o') {
 			// send
 			// save amount
 			navigation.navigate('read-nfc', {
 				type: type,
-				amount: $scope.price,
-				currency: 'TBD'
+				amount: $scope.price * conversionRate,
+				currency: 'BTC'
 			});
 		} else {
 			if (!isDecimal) {
@@ -56,7 +56,7 @@ module.exports = function($scope, dataService) {
 				$scope.price = (inputValue + outputDecimalValue).toFixed(decimalSettings);
 			}
 
-			$scope.convertedPrice = 'SEK ' + $scope.price * conversionRate;
+			$scope.convertedPrice = 'BTC ' + $scope.price * conversionRate;
 		}
 	};
 };

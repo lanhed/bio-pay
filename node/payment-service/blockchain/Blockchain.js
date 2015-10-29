@@ -4,6 +4,7 @@ require('colors');
 
 const blockchain = require('blockchain.info');
 const ConfirmationServer = require('./ConfirmationServer');
+const Utils = require('./bitcoin-utils');
 
 const baseConfig = {
 	receiveAddress: '',
@@ -66,6 +67,8 @@ module.exports = class Blockchain {
 		let wallet = new blockchain.MyWallet(credentials.username, credentials.password, credentials.password2);
 
 		// Transform currency into satoshi
+		let satoshi = Utils.btcToSatoshi(amount);
+
 
 		return new Promise((resolve, reject) => {
 			this.receiver.create(this.config.receiveAddress, (error, addressData) => {
@@ -75,10 +78,11 @@ module.exports = class Blockchain {
 
 				wallet.send({
 					to: addressData.input_address,
-					amount: amount
+					amount: satoshi
+					// amount: amount
 				}, (error, data) => {
-					if (error) {
-						return reject(error);
+					if (error || data.error) {
+						return reject(error || data.error);
 					}
 
 					resolve(data);

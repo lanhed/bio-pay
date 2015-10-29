@@ -121,18 +121,24 @@ module.exports = class GUIServer {
 
 			let process = this.paymentApp.readNfc(type);
 
-			process.on('reading', () => {
+			process.on('processing', () => {
+				this.broadcastSocketMessage('nfc.reading');
+			});
+
+			process
+				.then(data => {
+					res.json(data);
+				})
+				.catch(error => {
+					res.status(500).end(error);
+				});
+
+			/*process.on('processing', () => {
 				this.broadcastSocketMessage('nfc.reading');
 			});
 			process.on('done', (data) => {
 				res.json(data);
-			});
-
-			/*this.paymentApp.readNfc(type)
-				.then(data => {
-					res.json(data);
-				})
-				.catch(error => { throw error; });*/
+			});*/
 		});
 
 		/**

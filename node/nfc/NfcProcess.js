@@ -56,21 +56,39 @@ class NfcProcess extends EventEmitter {
 			case MessageCodes.states.error:
 				this.reject(ErrorCodes.foo); // Find error code
 				break;
+			
 			default:
 				this.data += data;
 				break;
 		}
+
+		console.log(`this.data: "${this.data}"`.yellow);
 	}
 
-	parseData(data) {
-		// hardcoded bitcoins for now
-		data = data.replace('BTC:', '');
-		let firstComma = data.indexOf(',');
+	parseData(unparsed) {
+		let firstColon = unparsed.indexOf(':');
+		let dataType = unparsed.substr(0, firstColon);
+		let data = unparsed.substr(firstColon + 1);
 
-		return {
-			username: data.substr(0, firstComma),
-			password: data.substr(firstComma + 1)
-		};
+		let parsed = null;
+
+		console.log(unparsed);
+
+		switch (dataType) {
+			case 'BTC':
+				let firstComma = data.indexOf(',');
+				parsed = {
+					username: data.substr(0, firstComma),
+					password: data.substr(firstComma + 1)
+				};
+				break;
+			default:
+				// Unknown type
+				this.reject('Unexpected returned data', unparsed);
+				break;
+		}
+
+		return parsed;
 	}
 
 	then(fn1, fn2) {

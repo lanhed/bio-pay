@@ -21,7 +21,12 @@ module.exports = class PaymentService {
 	}
 
 	getSupportedPaymentServices() {
-		return _.map(this.paymentServices, (__, name) => name);
+		return _.map(this.paymentServices, (__, name) => {
+			return {
+				type: name,
+				name: name
+			};
+		});
 	}
 
 	isPaymentTypeSupported(type) {
