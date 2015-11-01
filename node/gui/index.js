@@ -8,7 +8,7 @@ const config = {
 };
 
 new GUIServer({
-	// Dummy responds to API
+	// Dummy responses to API
 
 	getPaymentServices() {
 		
@@ -21,7 +21,10 @@ new GUIServer({
 	getExchangeRates() {
 		return new Promise((resolve, reject) => {
 			if (Math.random() < config.errorRate) {
-				return reject('Request was randomly rejected');
+				return reject({
+					errorType: 'blockchain-exchange-rates',
+					errorMessage: 'Request was randomly rejected'
+				});
 			}
 
 			resolve({
@@ -68,34 +71,17 @@ new GUIServer({
 			process.emit('processing');
 		}, 2000);
 
-		/*setTimeout(() => {
-			process.emit('done', {
-				type,
-				username: 'user',
-				password: 'pass'
-			});
-		}, 6000);*/
-
 		return process;
-
-		/*return new Promise((resolve, reject) => {
-			if (Math.random() < config.errorRate) {
-				return reject('Request was randomly rejected');
-			}
-
-			resolve({
-				type,
-				username: 'user',
-				password: 'pass'
-			});
-		});*/
 	},
 
 	makePayment(type, credentials, amount, currency) {
 		return new Promise((resolve, reject) => {
 			setTimeout(() => {
 				if (Math.random() < config.errorRate) {
-					return reject('Request was randomly rejected');
+					return reject({
+						errorType: 'blockchain-payment',
+						errorMessage: 'Request was randomly rejected'
+					});
 				}
 
 				resolve({

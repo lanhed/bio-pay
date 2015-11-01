@@ -6,6 +6,8 @@ const blockchain = require('blockchain.info');
 const ConfirmationServer = require('./ConfirmationServer');
 const Utils = require('./bitcoin-utils');
 
+const ErrorMessages = require('./error-messages');
+
 const baseConfig = {
 	receiveAddress: '',
 	apiCode: null,
@@ -55,7 +57,10 @@ module.exports = class Blockchain {
 		return new Promise((resolve, reject) => {
 			blockchain.exchangeRates.getTicker((error, data) => {
 				if (error) {
-					return reject(error);
+					return reject({
+						errorType: 'blockchain-exchange-rates',
+						errorMEssage: error
+					});
 				}
 
 				resolve(data);
@@ -73,16 +78,31 @@ module.exports = class Blockchain {
 		return new Promise((resolve, reject) => {
 			this.receiver.create(this.config.receiveAddress, (error, addressData) => {
 				if (error) {
-					return reject(error);
+					return reject({
+						errortype: 'blockchain-payment',
+						errorMessage: error
+					});
 				}
 
 				wallet.send({
 					to: addressData.input_address,
 					amount: satoshi
-					// amount: amount
 				}, (error, data) => {
-					if (error || data.error) {
-						return reject(error || data.error);
+					// Error in http-request
+					if (error) {
+						return reject({
+							errorType: 'blockchain-payment',
+							errorMessage: error
+						});
+					}
+
+					// Error response from API
+					if (data.error) {
+						let errorMessage = ErrorMessages[data.error] || data.error;
+						return reject({
+							errorType: 'blockchain-payment',
+							errorMessage: errorMessage
+						});
 					}
 
 					resolve(data);

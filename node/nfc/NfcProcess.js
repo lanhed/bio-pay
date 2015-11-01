@@ -39,10 +39,16 @@ class NfcProcess extends EventEmitter {
 		this.update(data.trim()); // Removes \r character but a bit dangerous, needs a better solution
 	}
 	onError(error) {
-		this.reject(error);
+		this.reject({
+			errorType: 'serialport',
+			errorMessage: error
+		});
 	}
 	onClose() {
-		this.reject('Connection to nfc-reader closed.');
+		this.reject({
+			errorType: 'serialport',
+			errorMessage: 'Connection to nfc-reader closed.'
+		});
 	}
 
 	update(data) {
@@ -54,7 +60,10 @@ class NfcProcess extends EventEmitter {
 				this.resolve(this.parseData(this.data));
 				break;
 			case MessageCodes.states.error:
-				this.reject(ErrorCodes.foo); // Find error code
+				this.reject({
+					errorType: 'nfc-read',
+					errorMessage: ErrorCodes.foo // Find error code
+				});
 				break;
 			
 			default:
@@ -84,7 +93,10 @@ class NfcProcess extends EventEmitter {
 				break;
 			default:
 				// Unknown type
-				this.reject('Unexpected returned data', unparsed);
+				this.reject({
+					error: 'nfc-read',
+					errorMessage: 'Unkown data format read from nfc.'
+				});
 				break;
 		}
 
