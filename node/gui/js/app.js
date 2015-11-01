@@ -6,6 +6,8 @@ require('angular-route');
 // Controllers
 require('./controllers/appControllers');
 
+const navigation = require('./utils/navigation');
+
 let app = angular.module('app',[
 	'ngRoute',
 	'appControllers'
@@ -50,5 +52,8 @@ app.config(($routeProvider) => {
 );
 
 app.factory('dataService', () => require('./services/dataService'));
+app.factory('exchangeRateService', require('./services/exchangeRateService'));
+
+navigation.navigate('');
 
 module.exports = app;

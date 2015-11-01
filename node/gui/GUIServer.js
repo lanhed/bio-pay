@@ -1,5 +1,7 @@
 'use strict';
 
+require('colors');
+
 const path = require('path');
 const http = require('http');
 
@@ -35,6 +37,8 @@ module.exports = class GUIServer {
 		this.setupSocketIO();
 
 		this.server.listen(this.config.port);
+
+		console.log(`GUIServer started on port=${this.config.port}`.green);
 	}
 
 	//
@@ -132,13 +136,6 @@ module.exports = class GUIServer {
 				.catch(error => {
 					res.status(500).end(error);
 				});
-
-			/*process.on('processing', () => {
-				this.broadcastSocketMessage('nfc.reading');
-			});
-			process.on('done', (data) => {
-				res.json(data);
-			});*/
 		});
 
 		/**

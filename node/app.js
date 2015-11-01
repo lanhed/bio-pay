@@ -21,7 +21,6 @@ module.exports = class App {
 
 	setupPaymentService() {
 		let config = Settings.readJSON('payment-services');
-
 		this.paymentService = new PaymentService(config);
 	}
 
@@ -42,16 +41,6 @@ module.exports = class App {
 	}
 
 	makePayment(type, credentials, amount, currency) {
-		/*return new Promise((resolve) => {
-			setTimeout(() => {
-				resolve({
-					message: 'Payment successful',
-					amount,
-					currency
-				});
-			}, 2000);
-
-		});*/
 		return this.paymentService.makePayment(type, credentials, amount, currency);
 	}
 };

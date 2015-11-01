@@ -1,4 +1,3 @@
-/* jshint browser:true */
 'use strict';
 
 const navigation = require('../utils/navigation');

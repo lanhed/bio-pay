@@ -1,62 +1,71 @@
-/* jshint browser:true */
 'use strict';
 
 const navigation = require('../utils/navigation');
-// const query = require('../utils/query');
 
 /**
  * Payment Input Controller
  */
-module.exports = function($scope, dataService) {
-	let inputValue = 0;
-	let inputDecimalValue = 0;
+module.exports = function($scope, dataService, exchangeRateService) {
+	let currency = 'EUR';
+	let integerValue = '';
+	let decimalValue = '';
 	let isDecimal = false;
-	let conversionRate = 0.0035;
-	// let decimalSettings = app.paymentConfiguration.type === 'bitcoin' ? 5 : 2;
-	let decimalSettings = 5;
 
-	// let type = query.getQuery('type');
-	let type = dataService.get('type');
-
-	$scope.buttonPressHandler = (char) => {
-		if (char === '.') {
-			isDecimal = true;
-		} else if (char === 'x') {
-			// cancel
-			// show alert/modal => 'Cancel payment? yes/no'
-		} else if (char === '<') {
-			// erase
-			// reset amount
-			isDecimal = false;
-			inputValue = 0;
-			inputDecimalValue = 0;
-			$scope.price = 0;
-			$scope.convertedPrice = 'BTC ' + 0;
-		} else if (char === 'o') {
-			// send
-			// save amount
-			navigation.navigate('read-nfc', {
-				type: type,
-				amount: $scope.price * conversionRate,
-				currency: 'BTC'
-			});
-		} else {
-			if (!isDecimal) {
-				inputValue *= 10;
-				inputValue += char;
-				$scope.price = inputValue;
-			} else {
-				inputDecimalValue *= 10;
-				inputDecimalValue += char;
-
-				let outputDecimalValue = inputDecimalValue;
-				while(outputDecimalValue > 1) {
-					outputDecimalValue = outputDecimalValue / 10;
-				}
-				$scope.price = (inputValue + outputDecimalValue).toFixed(decimalSettings);
-			}
-
-			$scope.convertedPrice = 'BTC ' + $scope.price * conversionRate;
+	function renderOutput() {
+		if (!exchangeRateService.rates) {
+			return;
 		}
+
+		let value = getValue();
+		let bitcoinsValue = getValueInBitcoins();
+		let currencySymbol = exchangeRateService.currencySymbol(currency);
+
+		$scope.price = value.toFixed(2) + ' ' + currencySymbol;
+		$scope.convertedPrice = 'BTC: ' + (bitcoinsValue || 0).toFixed(5);
+	}
+	function getValue() {
+		return parseFloat(`${integerValue || '0'}.${decimalValue || '00'}`);
+	}
+	function getValueInBitcoins() {
+		return exchangeRateService.convertToBitcoins(getValue(), currency);
+	}
+
+
+	$scope.numberClickHandler = (value) => {
+		if (isDecimal) {
+			decimalValue += value;
+		} else {
+			integerValue += value;
+		}
+
+		renderOutput();
 	};
+
+	$scope.decimalClickHandler = () => {
+		isDecimal = true;
+		renderOutput();
+	};
+
+	$scope.cancelClickHandler = () => {
+		// show alert/modal => 'Cancel payment? yes/no'
+		navigation.navigate('');
+	};
+
+	$scope.eraseClickHandler = () => {
+		integerValue = decimalValue = '';
+		isDecimal = false;
+		renderOutput();
+	};
+
+	$scope.confirmClickHandler = () => {
+		navigation.navigate('read-nfc', {
+			type: dataService.get('type'),
+			amount: getValueInBitcoins(),
+			currency: 'BTC'
+		});
+	};
+
+	exchangeRateService.on('rates.updated', renderOutput);
+
+	renderOutput();
 };

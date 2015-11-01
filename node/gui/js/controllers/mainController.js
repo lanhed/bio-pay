@@ -1,4 +1,3 @@
-/* jshint browser:true */
 'use strict';
 
 const api = require('../utils/api');
