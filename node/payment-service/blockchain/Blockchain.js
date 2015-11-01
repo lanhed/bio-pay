@@ -39,7 +39,7 @@ module.exports = class Blockchain {
 	}
 
 	setupReceiver() {
-		let callbackUrl = this.config.callbackUrl ? this.config.callbackUrl + ':' + this.config.serverPort : null;
+		let callbackUrl = this.config.callbackUrl ? this.config.callbackUrl + ':' + this.config.serverPort : '127.0.0.1';
 
 		this.receiver = new blockchain.Receive(callbackUrl);
 		
