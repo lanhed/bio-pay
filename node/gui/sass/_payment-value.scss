@@ -2,6 +2,9 @@
 // Payment value
 //
 #payment-value {
+	position: relative;
+    overflow: hidden;
+
 	.output,
 	.converted-output {
 		height: 80px;
@@ -42,12 +45,12 @@
 				display: inline-block;
 				width: 70px;
 				height: 47px;
-				border: 1px solid;
+				border-radius: 4px;
 				margin-bottom: 4px;
 				font-size: 30px;
 
 				&.zero {
-					margin-left: 74px;
+					margin-left: 76px;
 				}
 				&.cancel {
 					background-color: red;
@@ -58,7 +61,11 @@
 				&.confirm {
 					background-color: green;
 				}
+				&:focus {
+					outline:0;
+				}
 			}
+			
 		}
 
 		&.nav {
