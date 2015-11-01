@@ -29,7 +29,7 @@ class NfcProcess extends EventEmitter {
 	}
 
 	destroy() {
-		console.info('Destroying NfcProcess');
+		console.info('Destroying NfcProcess'.yellow);
 		this.connection.removeListener('data', this.onData);
 		this.connection.removeListener('error', this.onError);
 		this.connection.removeListener('close', this.onClose);
@@ -70,8 +70,6 @@ class NfcProcess extends EventEmitter {
 				this.data += data;
 				break;
 		}
-
-		console.log(`this.data: "${this.data}"`.yellow);
 	}
 
 	parseData(unparsed) {
@@ -80,8 +78,6 @@ class NfcProcess extends EventEmitter {
 		let data = unparsed.substr(firstColon + 1);
 
 		let parsed = null;
-
-		console.log(unparsed);
 
 		switch (dataType) {
 			case 'BTC':
@@ -99,6 +95,8 @@ class NfcProcess extends EventEmitter {
 				});
 				break;
 		}
+
+		console.log(`Parsed data: ${JSON.stringify(parsed)}`.yellow);
 
 		return parsed;
 	}

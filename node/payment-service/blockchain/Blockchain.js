@@ -34,6 +34,8 @@ module.exports = class Blockchain {
 		}
 
 		this.setupReceiver();
+
+		console.log(`Created Blockchain payment service with receive address: ${this.config.receiveAddress}`.yellow);
 	}
 
 	setupReceiver() {
@@ -72,8 +74,9 @@ module.exports = class Blockchain {
 		let wallet = new blockchain.MyWallet(credentials.username, credentials.password, credentials.password2);
 
 		// Transform currency into satoshi
-		let satoshi = Utils.btcToSatoshi(amount);
+		let satoshi = Math.round(Utils.btcToSatoshi(amount));
 
+		console.log('New payment requested');
 
 		return new Promise((resolve, reject) => {
 			this.receiver.create(this.config.receiveAddress, (error, addressData) => {
@@ -83,6 +86,7 @@ module.exports = class Blockchain {
 						errorMessage: error
 					});
 				}
+				console.log('Received new payment address');
 
 				wallet.send({
 					to: addressData.input_address,

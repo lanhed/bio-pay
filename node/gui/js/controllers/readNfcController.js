@@ -47,6 +47,7 @@ module.exports = function($http, dataService) {
 			setUIState('payment');
 			
 			let data = res.data;
+			console.log('Read data from nfc chip', data);
 
 			return api.post($http, `payment/${type}`, {
 				username: data.username,
@@ -58,17 +59,8 @@ module.exports = function($http, dataService) {
 		.then(result => {
 			console.log('Payment result', result);
 			navigation.navigate('confirm');
-			/*if (result.success) {
-			} else {
-				navigation.navigate('error', {
-					error: result.error
-				});
-			}*/
-
 		})
 		.catch(error => {
-			navigation.navigate('error', {
-				error
-			});
+			navigation.navigate('error', error.data);
 		});
 };

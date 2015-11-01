@@ -4,5 +4,8 @@
 	"browser": true,
 	"esnext": true,
 	"unused": true,
-	"sub": true
+	"sub": true,
+	"globals": {
+		"console": true
+	}
 }
