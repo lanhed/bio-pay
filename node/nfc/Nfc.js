@@ -40,7 +40,10 @@ module.exports = class Nfc {
 				throw err;
 			}
 
-			let port = ports[0];
+			let port = ports.filter(port => {
+				return port.manufacturer.indexOf('Arduino') !== -1;
+			})[0];
+
 			if (!port) {
 				throw 'Could not find any connected arduino';
 			}
