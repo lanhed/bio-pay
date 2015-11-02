@@ -39,7 +39,7 @@ module.exports = class Blockchain {
 	}
 
 	setupReceiver() {
-		let callbackUrl = this.config.callbackUrl ? this.config.callbackUrl + ':' + this.config.serverPort : '127.0.0.1';
+		let callbackUrl = this.config.callbackUrl ? this.config.callbackUrl + ':' + this.config.serverPort : 'http://0.0.0.0';
 
 		this.receiver = new blockchain.Receive(callbackUrl);
 		
@@ -77,6 +77,8 @@ module.exports = class Blockchain {
 		let satoshi = Math.round(Utils.btcToSatoshi(amount));
 
 		console.log('New payment requested');
+		console.log(this.config);
+		console.log(this.receiver);
 
 		return new Promise((resolve, reject) => {
 			this.receiver.create(this.config.receiveAddress, (error, addressData) => {
