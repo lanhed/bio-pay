@@ -137,7 +137,8 @@ module.exports = class GUIServer {
 				})
 				.catch(error => {
 					console.error('Nfc read error', error);
-					res.status(500).end(error);
+					res.status(500).json(error);
+					res.end();
 				});
 		});
 
@@ -172,6 +173,7 @@ module.exports = class GUIServer {
 				.catch(error => {
 					console.error('Payment error', error);
 					res.status(500).json(error);
+					res.end();
 				});
 		});
 	}

@@ -91,7 +91,7 @@ class NfcProcess extends EventEmitter {
 				// Unknown type
 				this.reject({
 					error: 'nfc-read',
-					errorMessage: 'Unkown data format read from nfc.'
+					errorMessage: 'Couldn\'t read the correct data from chip. Try again.'
 				});
 				break;
 		}
