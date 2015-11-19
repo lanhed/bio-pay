@@ -20,14 +20,14 @@ NfcAdapter nfc = NfcAdapter(pn532_i2c);
 
 // STATES FOR STATE MACHINE
 #define START 'S'
-#define WRITE 'W'
-#define READ  'R'
-#define DELETE 'D'
+#define WRITE_NFC 'W'
+#define READ_NFC  'R'
+#define DELETE_NFC 'D'
 #define BITCOINS 'B'
 #define HELP 'H'
 
 byte states[] = {
-  START, WRITE, READ, DELETE, HELP, BITCOINS
+  START, WRITE_NFC, READ_NFC, DELETE_NFC, HELP, BITCOINS
 };
 
 
@@ -239,9 +239,9 @@ void Writenfc() {
 
     Serial.println("#P");
     NdefMessage message = NdefMessage();
-    message.addUriRecord("BTC:f5aeec40-d474-4376-a863-2bcfee742c37,pelota12345");    
+    message.addUriRecord("BTC:f5aeec40-d474-4376-a863-2bcfee742c37,pelota12345");
     //message.addUriRecord("PN:840326-XXXX");
-    //message.addUriRecord("EMAIL:jjtara@gmail.com");        
+    //message.addUriRecord("EMAIL:jjtara@gmail.com");
     //message.addUriRecord("http://arduino.cc");
     //message.addTextRecord("Goodbye, Arduino!");
     boolean success = nfc.write(message);
@@ -256,6 +256,25 @@ void Writenfc() {
 }
 
 
+
+void Formatnfc()
+{
+
+boolean success;
+
+  Serial.println("#P");
+  if (nfc.tagPresent()) {
+    boolean success = nfc.erase();
+  }
+
+  if (success) {
+    Serial.println("#S");
+  } else {
+    Serial.println("#F2");
+  }
+
+
+}
 
 void loop(void) {
 
@@ -289,7 +308,7 @@ void loop(void) {
 
       break;
 
-    case WRITE:
+    case WRITE_NFC:
       //Serial.println("\nWaiting for an nfc ...");
       Writenfc();
       state = defaultState;
@@ -297,7 +316,7 @@ void loop(void) {
       Serial.println("#R");
       break;
 
-    case READ:
+    case READ_NFC:
 
       //Serial.println("\nWaiting for an nfc ...");
       Readnfc();
@@ -308,14 +327,20 @@ void loop(void) {
 
     case BITCOINS:
 
-   
+
       //Serial.println("\nWaiting for an nfc ...");
       ReadBtc();
       state = defaultState;
       stateMenu = 'B';
       Serial.println("#R");
       break;
-         
+
+    case DELETE_NFC:
+
+
+
+      break;
+
 
   }
 }
