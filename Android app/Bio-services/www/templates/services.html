@@ -1,0 +1,33 @@
+<ion-view view-title="Services">
+  <ion-content>
+    <ion-list>
+      <ion-item ng-repeat="Service in Services" href="#/app/services/{{Service.id}}">
+        {{Service.title}}
+      </ion-item>
+    </ion-list>
+    <<div class="list card">
+
+      <a href="#" class="item item-icon-left">
+        <i class="icon ion-home"></i>
+         First Item
+      </a>
+
+      <a href="#" class="item item-icon-left">
+        <i class="icon ion-ios7-telephone"></i>
+         Second Item
+      </a>
+
+      <a href="#" class="item item-icon-left">
+        <i class="icon ion-wifi"></i>
+         Third Item
+      </a>
+
+      <a href="#" class="item item-icon-left">
+        <i class="icon ion-card"></i>
+         Fourth Item
+      </a>
+
+    </div>
+
+  </ion-content>
+</ion-view>

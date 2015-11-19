@@ -6,16 +6,12 @@ require('angular-route');
 // Controllers
 require('./controllers/appControllers');
 
+const navigation = require('./utils/navigation');
 
 let app = angular.module('app',[
 	'ngRoute',
 	'appControllers'
 ]);
-
-/*app.paymentConfiguration = {
-	type:null,
-	value:0
-};*/
 
 app.config(($interpolateProvider) => {
 	$interpolateProvider.startSymbol('{[{');
@@ -24,7 +20,6 @@ app.config(($interpolateProvider) => {
 
 app.config(($routeProvider) => {
 	$routeProvider
-
 		.when('/', {
 			templateUrl: 'views/home.html',
 			controller: 'mainController'
@@ -56,31 +51,9 @@ app.config(($routeProvider) => {
 	}
 );
 
-/*app.factory('dataService', ($http, $q) => {
-	let deferred = $q.defer();
-	let data = [];
-	let paymentConfiguration = {
-		type:null,
-		value:0
-	};
-	let service = {};
+app.factory('dataService', () => require('./services/dataService'));
+app.factory('exchangeRateService', require('./services/exchangeRateService'));
 
-	service.async = () => {
-		$http.get('data/store-config.json').success((d) => {
-			data = d;
-			deferred.resolve();
-		});
+navigation.navigate('');
 
-		return deferred.promise;
-	};
-
-	service.data = () => { return data; };
-	
-	service.currentPayment = (options) => {
-		//if option save
-	};
-
-	return service;
-});
-*/
 module.exports = app;

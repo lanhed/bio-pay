@@ -1,0 +1,39 @@
+#error {
+	.message {
+		position: relative;
+		padding: 30px;
+		text-align: center;
+
+		.red-blur {
+			position: absolute;
+			top: 178px;
+			left: 73px;
+		}
+
+		svg {
+			position: absolute;
+			top: 145px;
+			width: 275px;
+			left: 15px;
+
+			.overlapping-fill {
+				fill:#FFFFFF;
+			}
+			.chip {
+				fill:#DC0000;
+			}
+			.signal-circle-2 {
+				fill:none;
+				stroke:#CE3938;
+				stroke-width:5.2163;
+				stroke-miterlimit:10;
+				stroke-opacity:0;
+			}
+			.signal-circle-2 { stroke-opacity:1; }
+		}
+
+		.message {
+			top: 240px;
+		}
+	}
+}

@@ -21,7 +21,12 @@ module.exports = class PaymentService {
 	}
 
 	getSupportedPaymentServices() {
-		return _.map(this.paymentServices, (__, name) => name);
+		return _.map(this.paymentServices, (__, name) => {
+			return {
+				type: name,
+				name: name
+			};
+		});
 	}
 
 	isPaymentTypeSupported(type) {
@@ -29,11 +34,11 @@ module.exports = class PaymentService {
 	}
 
 
-	getExchangeRates(type) {
-		let service = this.paymentServices[type];
+	getExchangeRates() {
+		let service = this.paymentServices.bitcoins;
 
 		if (!service) {
-			throw Error('Unsupported payment type passed in to makePayment');		
+			throw Error('Unsupported payment type passed in to getExchangeRates');		
 		}
 
 		return service.getExchangeRates(); 

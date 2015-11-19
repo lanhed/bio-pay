@@ -1,14 +1,10 @@
 'use strict';
 
-// const query = require('./query');
-let payment = require('../payment');
+const dataService = require('../services/dataService');
 
 module.exports = {
 	navigate(screen, data) {
-		// let queryStr = query.getQueryString(data);
-		// window.location.href = (queryStr !== '' ? '?' + queryStr : '') + '#/' + screen;
-
-		payment.active = data;
+		dataService.setData(data);
 		window.location = '/#/' + screen;
 	}
 };

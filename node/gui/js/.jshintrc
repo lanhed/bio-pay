@@ -3,5 +3,9 @@
 	"browserify": true,
 	"browser": true,
 	"esnext": true,
-	"unused": true
+	"unused": true,
+	"sub": true,
+	"globals": {
+		"console": true
+	}
 }

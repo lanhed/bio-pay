@@ -1,4 +1,3 @@
-/* jshint browser:true */
 /* globals io */
 'use strict';
 
@@ -6,7 +5,6 @@ var $ = require('jquery');
 
 var api = require('../utils/api');
 var navigation = require('../utils/navigation');
-var query = require('../utils/query');
 
 
 var socket = io.connect();
@@ -37,10 +35,10 @@ function setUIState(state) {
 }
 
 
-module.exports = function($http) {
-	let type = query.getQuery('type');
-	let amount = query.getQuery('amount');
-	let currency = query.getQuery('currency');
+module.exports = function($http, dataService) {
+	let type = dataService.get('type');
+	let amount = dataService.get('amount');
+	let currency = dataService.get('currency');
 
 	setUIState('ready');
 
@@ -49,6 +47,7 @@ module.exports = function($http) {
 			setUIState('payment');
 			
 			let data = res.data;
+			console.log('Read data from nfc chip', data);
 
 			return api.post($http, `payment/${type}`, {
 				username: data.username,
@@ -58,44 +57,10 @@ module.exports = function($http) {
 			});
 		})
 		.then(result => {
+			console.log('Payment result', result);
 			navigation.navigate('confirm');
-			/*if (result.success) {
-			} else {
-				navigation.navigate('error', {
-					error: result.error
-				});
-			}*/
-
 		})
 		.catch(error => {
-			navigation.navigate('error', {
-				error
-			});
+			navigation.navigate('error', error.data);
 		});
-
-
-
-	// let i = 0;
-	// let el = $('#read-nfc').find('.read-tag');
-	// let header = el.find('h2');
-	// let interval = setInterval(() => {
-	// 	if (i === 0) {
-	// 		el.addClass('animate');
-	// 	} else if (i === 1) {
-	// 		el.removeClass('animate').addClass('read');
-	// 		header.html('Hold still');
-	// 	} else if (i === 2) {
-	// 		el.removeClass('read').addClass('done');
-	// 		header.html('Reading complete, processing payment.');
-	// 	} else {
-	// 		clearInterval(interval);
-	// 		navigation.navigate('confirm');
-	// 	}
-
-	// 	i++;
-	// },7500);
-	// visa animation när läsaren är redo att skanna
-	// visa animation när tag börjar skannas
-	// visa animation när tag skannats klart
-	// visa errormeddelande ifall något går fel
 };

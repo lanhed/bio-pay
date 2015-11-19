@@ -1,5 +1,7 @@
 'use strict';
 
+require('colors');
+
 const path = require('path');
 const http = require('http');
 
@@ -35,6 +37,8 @@ module.exports = class GUIServer {
 		this.setupSocketIO();
 
 		this.server.listen(this.config.port);
+
+		console.log(`GUIServer started on port=${this.config.port}`.green);
 	}
 
 	//
@@ -119,20 +123,23 @@ module.exports = class GUIServer {
 				return res.status(400).end('Need to supply type.');
 			}
 
+			console.log(`Request for reading nfc of type=${type}`.magenta);
+
 			let process = this.paymentApp.readNfc(type);
 
-			process.on('reading', () => {
+			process.on('processing', () => {
 				this.broadcastSocketMessage('nfc.reading');
 			});
-			process.on('done', (data) => {
-				res.json(data);
-			});
 
-			/*this.paymentApp.readNfc(type)
+			process
 				.then(data => {
 					res.json(data);
 				})
-				.catch(error => { throw error; });*/
+				.catch(error => {
+					console.error('Nfc read error', error);
+					res.status(500).json(error);
+					res.end();
+				});
 		});
 
 		/**
@@ -156,12 +163,18 @@ module.exports = class GUIServer {
 				return res.status(400).end(`Need to supply type, credentials, amount > 0.0 and currency.`);
 			}
 
+			console.log(`Request for new payment: ${JSON.stringify({type,username,password,amount,currency})}`.magenta);
+
 			this.paymentApp.makePayment(type, { username, password }, amount, currency)
 				.then((result) => {
-					console.log(result);
+					console.log('Payment result', result);
 					res.json(result);
 				})
-				.catch((error) => { throw error; });
+				.catch(error => {
+					console.error('Payment error', error);
+					res.status(500).json(error);
+					res.end();
+				});
 		});
 	}
 };

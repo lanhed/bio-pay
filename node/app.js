@@ -21,7 +21,6 @@ module.exports = class App {
 
 	setupPaymentService() {
 		let config = Settings.readJSON('payment-services');
-
 		this.paymentService = new PaymentService(config);
 	}
 

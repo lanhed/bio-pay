@@ -1,20 +1,23 @@
 'use strict';
 
-// Debug
-const Debug = require('../utils/Debug');
+require('colors');
+
 const serialport = require('serialport');
+const NfcProcess = require('./NfcProcess');
+const MessageCodes = require('./message-codes');
 
 
 //
 // Debug data
 //
-const debugData = Debug.getJSON('nfc');
+// const Debug = require('../utils/Debug');
+// const debugData = Debug.getJSON('nfc');
 
 
 const baseConfig = {
 	baudrate: 115200,
-	parserCharacter: '\n',
-	dataSeparator: ','
+	dataSeparator: ',',
+	encoding: 'utf8'
 };
 
 
@@ -37,7 +40,10 @@ module.exports = class Nfc {
 				throw err;
 			}
 
-			let port = ports[0];
+			let port = ports.filter(port => {
+				return port.manufacturer.indexOf('Arduino') !== -1;
+			})[0];
+
 			if (!port) {
 				throw 'Could not find any connected arduino';
 			}
@@ -50,7 +56,8 @@ module.exports = class Nfc {
 		this.port = port;
 		let connection = this.connection = new serialport.SerialPort(port.comName, {
 			baudrate: this.config.baudrate,
-			parser: serialport.parsers.readline(this.config.parserCharacter)
+			encoding: this.config.encoding,
+			parser: serialport.parsers.readline(MessageCodes.parseCharacter)
 		});
 
 		connection.on('open', this.onOpen.bind(this));
@@ -59,23 +66,44 @@ module.exports = class Nfc {
 		connection.on('close', this.onClose.bind(this));
 	}
 
-	onOpen() {
-
-	}
-
+	// 
+	// Serial port event handlers
+	// 
 	onData(data) {
+		console.info(`${data}`.cyan);
 	}
 
 	onError(error) {
-		console.log('Error from serialport');
+		console.log('Error from serialport'.cyan);
 		console.error(error);
 	}
 
-	onClose() {
+	onOpen() {
+		console.log('Connection to nfc-reader open'.cyan);
+	}
 
+	onClose() {
+		console.log('Connection to nfc-reader closed'.cyan);
 	}
 
 
+	createProcess(message) {
+		if (this.nfcProcess) {
+			throw 'Another process already active';
+		}
+
+		this.nfcProcess = new NfcProcess(this.connection, message);
+		
+		let destroy = () => {
+			this.nfcProcess.destroy();
+			this.nfcProcess = null;
+		};
+		this.nfcProcess
+			.then(destroy)
+			.catch(destroy);
+		
+		return this.nfcProcess;
+	}
 
 
 	/**
@@ -83,12 +111,20 @@ module.exports = class Nfc {
 	 * @param {String} type  Type of nfc data to read
 	 */
 	read(type) {
-		return new Promise((resolve, reject) => {
-			if (debugData[type]) {
-				resolve(debugData[type]);
-			} else {
-				reject(`Nfc type ${type} not supported`);
-			}
-		});
+		let message = MessageCodes.types[type];
+		
+		if (!message) {
+			throw `Message type: ${type} not supported`;
+		}
+
+		if (!this.connection) {
+			throw 'No connection set up for nfc-reader';
+		}
+
+		if (!this.connection.isOpen()) {
+			throw 'Connection to nfc-reader isn\t open yet';
+		}
+
+		return this.createProcess(message);
 	}
 };

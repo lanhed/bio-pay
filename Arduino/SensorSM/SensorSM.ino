@@ -55,7 +55,7 @@ void setup(void) {
   parameters = "";
 
 
-  Serial.print("#R");
+  Serial.println("#R");
 }
 
 
@@ -239,7 +239,11 @@ void Writenfc() {
 
     Serial.println("#P");
     NdefMessage message = NdefMessage();
+<<<<<<< HEAD
     message.addUriRecord("BTC:f5aeec40-d474-4376-a863-2bcfee742c37,pelota12345");
+=======
+    message.addUriRecord("BTC:f5aeec40-d474-4376-a863-2bcfee742c37,pelota12345,");
+>>>>>>> 969a5e8374c6d63868569949d57d3369a6e9d276
     //message.addUriRecord("PN:840326-XXXX");
     //message.addUriRecord("EMAIL:jjtara@gmail.com");
     //message.addUriRecord("http://arduino.cc");
@@ -282,7 +286,7 @@ void loop(void) {
   // get serial data
   // print the string when a newline arrives:
   if (stringComplete) {
-    Serial.println(inputString);
+    //Serial.println(inputString);
     // it there is anything to do with it, do it!
     if (isState(inputString[0])) {
       state = inputString[0];

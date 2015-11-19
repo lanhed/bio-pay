@@ -2,6 +2,10 @@
 // Base
 //
 
+html, body {
+	margin: 0;
+}
+
 body {
 	font-family: Verdana, Helvetica, Arial, sans-serif;
 }
@@ -12,4 +16,9 @@ h1, h2, h3, h4, h5 {
 
 a {
 	color: #FF4136;
+}
+
+.app-container {
+	width: 320px;
+	margin: 0 auto;
 }
