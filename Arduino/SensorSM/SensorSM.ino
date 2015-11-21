@@ -41,7 +41,9 @@ String dataString = "                         ";
 boolean stringComplete = false;  // whether the string is complete
 
 
-
+//BTC def
+#define BTCHeaderDef "BTC"
+#define BTCHeaderLength 4
 
 
 void setup(void) {
@@ -55,7 +57,7 @@ void setup(void) {
   parameters = "";
 
 
-  Serial.println("#R");
+  Serial.print("#R");
 }
 
 
@@ -163,29 +165,24 @@ void ReadBtc()
   {
     NfcTag tag = nfc.read();
     //Serial.println(tag.getTagType());
-    //Serial.print("UID: "); Serial.println(tag.getUidString());
+    //Serial.print("UID: "); 
+    //Serial.println(tag.getUidString());
 
     if (tag.hasNdefMessage()) // every tag won't have a message
     {
 
       NdefMessage message = tag.getNdefMessage();
-      //Serial.print("\nThis NFC Tag contains an NDEF Message with ");
-      //Serial.print(message.getRecordCount());
-      //Serial.print(" NDEF Record");
-      /*
-      if (message.getRecordCount() != 1) {
-        Serial.print("s");
-      }
-      */
+
       Serial.println("#P");
 
       // cycle through the records, printing some info from each
       int recordCount = message.getRecordCount();
       for (int i = 0; i < recordCount; i++)
       {
+        TypeMod = "";
         //Serial.print("\nNDEF Record "); Serial.println(i + 1);
         NdefRecord record = message.getRecord(i);
-        // NdefRecord record = message[i]; // alternate syntax
+        //BNdefRecord record = message[i]; // alternate syntax
 
         //Serial.print("  TNF: "); Serial.println(record.getTnf());
         //Serial.print("  Type: "); Serial.println(record.getType()); // will be "" for TNF_EMPTY
@@ -195,26 +192,34 @@ void ReadBtc()
         int payloadLength = record.getPayloadLength();
         byte payload[payloadLength];
         record.getPayload(payload);
-
+ 
         // Print the Hex and Printable Characters
         //Serial.print("  Payload (HEX): ");
         //PrintHexChar(payload, payloadLength);
 
-        // Force the data into a String (might work depending on the content)
-        // Real code should use smarter processing
-        String payloadAsString = "";
-        for (int c = 0; c < payloadLength; c++) {
-          payloadAsString += (char)payload[c];
+
+        //Reading the header of the message
+        for (int c = 1; c < BTCHeaderLength; c++) {
+          TypeMod += (char)payload[c];
         }
 
-        //TypeMod = payloadAsString.substring(0, payloadAsString.indexOf(':'));
+        if (TypeMod == "BTC") {
+          //Serial.println(TypeMod);
+          // Force the data into a String (might work depending on the content)
+          // Real code should use smarter processing
+          String payloadAsString = "";
+          for (int c = BTCHeaderLength; c < payloadLength; c++) {
+            payloadAsString += (char)payload[c];
+          }
+          payloadAsString = payloadAsString.substring(1);
 
-        //TypeMod = payloadAsString.substring(0, payloadAsString.indexOf(':'));
-        payloadAsString = payloadAsString.substring(1);
-        //Serial.print(TypeMod);
-        //if(TypeMod == "BT")
-        Serial.println(payloadAsString);
-
+          Serial.print(tag.getUidString());
+          Serial.print(",");
+          Serial.println(payloadAsString);
+          TypeMod = "";
+          payloadAsString = "";
+        }
+        
         // id is probably blank and will return ""
         String uid = record.getId();
         if (uid != "") {
@@ -228,9 +233,6 @@ void ReadBtc()
 
 
 
-
-
-
 void Writenfc() {
 
 
@@ -239,13 +241,9 @@ void Writenfc() {
 
     Serial.println("#P");
     NdefMessage message = NdefMessage();
-<<<<<<< HEAD
-    message.addUriRecord("BTC:f5aeec40-d474-4376-a863-2bcfee742c37,pelota12345");
-=======
-    message.addUriRecord("BTC:f5aeec40-d474-4376-a863-2bcfee742c37,pelota12345,");
->>>>>>> 969a5e8374c6d63868569949d57d3369a6e9d276
-    //message.addUriRecord("PN:840326-XXXX");
-    //message.addUriRecord("EMAIL:jjtara@gmail.com");
+    message.addUriRecord("PN:840326-XXXX");
+    message.addUriRecord("EMAIL:YOUREMAILS");
+    message.addUriRecord("BTC:ACCOUNT");    
     //message.addUriRecord("http://arduino.cc");
     //message.addTextRecord("Goodbye, Arduino!");
     boolean success = nfc.write(message);
@@ -264,7 +262,7 @@ void Writenfc() {
 void Formatnfc()
 {
 
-boolean success;
+  boolean success;
 
   Serial.println("#P");
   if (nfc.tagPresent()) {
@@ -286,7 +284,7 @@ void loop(void) {
   // get serial data
   // print the string when a newline arrives:
   if (stringComplete) {
-    //Serial.println(inputString);
+    Serial.println(inputString);
     // it there is anything to do with it, do it!
     if (isState(inputString[0])) {
       state = inputString[0];

@@ -55,6 +55,8 @@ angular.module('starter.controllers', ['ionic'])
 .controller('ServiceCtrl', function($scope, $stateParams) {
 })
 
+
+
 .controller('EntryCtrl', function ($scope, nfcService) {
 
     $scope.tag = nfcService.tag;
