@@ -50,8 +50,10 @@ module.exports = function($http, dataService) {
 			console.log('Read data from nfc chip', data);
 
 			return api.post($http, `payment/${type}`, {
-				username: data.username,
-				password: data.password,
+				// username: data.username,
+				// password: data.password,
+				tagId: data.tagId,
+				credentials: data.credentials,
 				amount,
 				currency
 			});

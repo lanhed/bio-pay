@@ -73,32 +73,60 @@ class NfcProcess extends EventEmitter {
 	}
 
 	parseData(unparsed) {
-		let firstColon = unparsed.indexOf(':');
-		let dataType = unparsed.substr(0, firstColon);
-		let data = unparsed.substr(firstColon + 1);
+		let firstComma = unparsed.indexOf(',');
+		
+		// let tagId = unparsed.substr(0, firstComma);
+		// let credentials = unparsed.substr(firstComma + 1);
 
-		let parsed = null;
+		let tagId = unparsed;
 
-		switch (dataType) {
-			case 'BTC':
-				let firstComma = data.indexOf(',');
-				parsed = {
-					username: data.substr(0, firstComma),
-					password: data.substr(firstComma + 1)
-				};
-				break;
-			default:
-				// Unknown type
-				this.reject({
-					error: 'nfc-read',
-					errorMessage: 'Couldn\'t read the correct data from chip. Try again.'
-				});
-				break;
+		const ids = {
+			// juanjo
+			'0485e612ff3880': 'V9rhJrGla9jlWjIo8eaqAgAk3i+r/Ua88jQgFc6Qyeo/LaC+aAJ4Yd8ndpe029gwiTJknTTtt1LJJGqEGgg60pb/0lkcEQpJWMCjT4F7RWgAs1spyJkNDKkvW8rqZWS6ASE12rZdbMOggzNwLiM/V6jhQ+xm0t3BlUbPVE49leoC7IFy8hUJccfEdBYhJ7ERX8NWe+5bnftYQUVoX9n27lp8s/SuwFvK9Fvcvg9FcdNA8aCu7gSPHfzdWdIswrky',
+			// old-tag
+			'04d9c8c2613e80': 'Qup3HMm0gnfqgQsD6vCVeZkdKLHj+w9sIp8y/INP7YR603G5sQArZqkY4JWXWrBdlHDiWH2cvbHTCWPbrya5PS51Qb7tExMTZaXZ8LOpsqFSJlSFQ9/LyGUa88EZsCM3FC1aWyAp4SPGaM+TLI6CM4zn86K5ajifqsG4ojDMUPd9C/1GSO7gxGTVMx6QklecjYT9WJgStB5PiISyA5+nGruZpkpz/Ic8Jdvky+kg0QZ1CGi17X9XwpNeKm/ek/jP'
+		};
+
+		let credentials = ids[tagId];
+
+		if (!credentials) {
+			this.reject({
+				error: 'nfc-read',
+				errorMessage: 'Couldn\'t read the correct data from chip. Try again.'
+			});
 		}
 
-		console.log(`Parsed data: ${JSON.stringify(parsed)}`.yellow);
+		return {
+			tagId,
+			credentials
+		};
 
-		return parsed;
+		
+		// let dataType = unparsed.substr(0, firstColon);
+		// let data = unparsed.substr(firstColon + 1);
+
+		// let parsed = null;
+
+		// switch (dataType) {
+		// 	case 'BTC':
+		// 		let firstComma = data.indexOf(',');
+		// 		parsed = {
+		// 			username: data.substr(0, firstComma),
+		// 			password: data.substr(firstComma + 1)
+		// 		};
+		// 		break;
+		// 	default:
+		// 		// Unknown type
+		// 		this.reject({
+		// 			error: 'nfc-read',
+		// 			errorMessage: 'Couldn\'t read the correct data from chip. Try again.'
+		// 		});
+		// 		break;
+		// }
+
+		// console.log(`Parsed data: ${JSON.stringify(parsed)}`.yellow);
+
+		// return parsed;
 	}
 
 	then(fn1, fn2) {

@@ -153,19 +153,22 @@ module.exports = class GUIServer {
 		 */
 		app.post('/api/payment/:type', (req, res) => {
 			const type = req.params.type;
-			const username = req.query.username;
-			const password = req.query.password;
+			// const username = req.query.username;
+			// const password = req.query.password;
+			const credentials = req.query.credentials;
+			const tagId = req.query.tagId;
 			const amount = req.query.amount;
 			const currency = req.query.currency;
 
-			if (!type || !username || !password || !amount || !currency) {
+			// if (!type || !username || !password || !amount || !currency) {
+			if (!type || !credentials || !tagId || !amount || !currency) {
 				console.error(req.query);
-				return res.status(400).end(`Need to supply type, credentials, amount > 0.0 and currency.`);
+				return res.status(400).end(`Need to supply type, credentials, tag id, amount > 0.0 and currency.`);
 			}
 
-			console.log(`Request for new payment: ${JSON.stringify({type,username,password,amount,currency})}`.magenta);
+			console.log(`Request for new payment: ${JSON.stringify({type,credentials,tagId,amount,currency})}`.magenta);
 
-			this.paymentApp.makePayment(type, { username, password }, amount, currency)
+			this.paymentApp.makePayment(type, { credentials, tagId }, amount, currency)
 				.then((result) => {
 					console.log('Payment result', result);
 					res.json(result);

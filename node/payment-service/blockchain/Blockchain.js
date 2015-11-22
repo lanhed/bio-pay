@@ -5,6 +5,7 @@ require('colors');
 const blockchain = require('blockchain.info');
 const ConfirmationServer = require('./ConfirmationServer');
 const Utils = require('./bitcoin-utils');
+const request = require('request');
 
 const ErrorMessages = require('./error-messages');
 
@@ -12,7 +13,8 @@ const baseConfig = {
 	receiveAddress: '',
 	apiCode: null,
 	callbackUrl: null,
-	serverPort: 8002
+	serverPort: 8002,
+	serviceUrl: 'http://localhost:3000'
 };
 
 module.exports = class Blockchain {
@@ -71,49 +73,66 @@ module.exports = class Blockchain {
 	}
 
 	makePayment(credentials, amount, currency) {
-		let wallet = new blockchain.MyWallet(credentials.username, credentials.password, credentials.password2);
-
-		// Transform currency into satoshi
-		let satoshi = Math.round(Utils.btcToSatoshi(amount));
-
-		console.log('New payment requested');
-		console.log(this.config);
-		console.log(this.receiver);
-
 		return new Promise((resolve, reject) => {
-			this.receiver.create(this.config.receiveAddress, (error, addressData) => {
+			let receiveAddress = this.config.receiveAddress;
+			let url = this.config.serviceUrl;
+
+			url += `/walletTsx?credentials=${encodeURIComponent(credentials.credentials)}&tagId=${credentials.tagId}&amount=${amount}&receiveAddress=${receiveAddress}`;
+
+			request(url, (error, response, body) => {
 				if (error) {
-					return reject({
-						errortype: 'blockchain-payment',
-						errorMessage: error
-					});
+					return reject(JSON.parse(error));
 				}
-				console.log('Received new payment address');
 
-				wallet.send({
-					to: addressData.input_address,
-					amount: satoshi
-				}, (error, data) => {
-					// Error in http-request
-					if (error) {
-						return reject({
-							errorType: 'blockchain-payment',
-							errorMessage: error
-						});
-					}
-
-					// Error response from API
-					if (data.error) {
-						let errorMessage = ErrorMessages[data.error] || data.error;
-						return reject({
-							errorType: 'blockchain-payment',
-							errorMessage: errorMessage
-						});
-					}
-
-					resolve(data);
-				});
+				resolve(JSON.parse(body));
 			});
 		});
 	}
+
+	// makePayment(credentials, amount, currency) {
+	// 	let wallet = new blockchain.MyWallet(credentials.username, credentials.password, credentials.password2);
+
+	// 	// Transform currency into satoshi
+	// 	let satoshi = Math.round(Utils.btcToSatoshi(amount));
+
+	// 	console.log('New payment requested');
+	// 	console.log(this.config);
+	// 	console.log(this.receiver);
+
+	// 	return new Promise((resolve, reject) => {
+	// 		this.receiver.create(this.config.receiveAddress, (error, addressData) => {
+	// 			if (error) {
+	// 				return reject({
+	// 					errortype: 'blockchain-payment',
+	// 					errorMessage: error
+	// 				});
+	// 			}
+	// 			console.log('Received new payment address');
+
+	// 			wallet.send({
+	// 				to: addressData.input_address,
+	// 				amount: satoshi
+	// 			}, (error, data) => {
+	// 				// Error in http-request
+	// 				if (error) {
+	// 					return reject({
+	// 						errorType: 'blockchain-payment',
+	// 						errorMessage: error
+	// 					});
+	// 				}
+
+	// 				// Error response from API
+	// 				if (data.error) {
+	// 					let errorMessage = ErrorMessages[data.error] || data.error;
+	// 					return reject({
+	// 						errorType: 'blockchain-payment',
+	// 						errorMessage: errorMessage
+	// 					});
+	// 				}
+
+	// 				resolve(data);
+	// 			});
+	// 		});
+	// 	});
+	// }
 };
