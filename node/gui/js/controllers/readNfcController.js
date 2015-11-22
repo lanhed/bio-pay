@@ -53,7 +53,7 @@ module.exports = function($http, dataService) {
 				// username: data.username,
 				// password: data.password,
 				tagId: data.tagId,
-				credentials: data.credentials,
+				credentials: encodeURIComponent(data.credentials),
 				amount,
 				currency
 			});

@@ -79,12 +79,16 @@ module.exports = class Blockchain {
 
 			url += `/walletTsx?credentials=${encodeURIComponent(credentials.credentials)}&tagId=${credentials.tagId}&amount=${amount}&receiveAddress=${receiveAddress}`;
 
+			console.log(url);
+
 			request(url, (error, response, body) => {
-				if (error) {
-					return reject(JSON.parse(error));
+				let parsed = JSON.parse(body);
+
+				if (error || response.statusCode !== 200) {
+					return reject(error || parsed);
 				}
 
-				resolve(JSON.parse(body));
+				resolve(parsed);
 			});
 		});
 	}
