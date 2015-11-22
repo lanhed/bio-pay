@@ -13,8 +13,8 @@ module.exports = class Crypt {
 	constructor(config) {
 		this.config = Object.assign({}, baseConfig, config);
 
-		this.privateKey = new NodeRSA(privateKey);
-		this.publicKey = new NodeRSA(publicKey);
+		this.privateKey = new NodeRSA(this.config.privateKey);
+		this.publicKey = new NodeRSA(this.config.publicKey);
 	}
 
 	encrypt(text) {
