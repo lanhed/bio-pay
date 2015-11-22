@@ -2,10 +2,11 @@
   <ion-content>
     <ion-list>
       <ion-item ng-repeat="Service in Services" href="#/app/services/{{Service.id}}">
+      <!-- <ion-item ng-repeat="Service in Services" href="#/app/{{Service.url}}"> -->
         {{Service.title}}
       </ion-item>
     </ion-list>
-    <<div class="list card">
+    <!-- <div class="list card">
 
       <a href="#" class="item item-icon-left">
         <i class="icon ion-home"></i>
@@ -27,7 +28,7 @@
          Fourth Item
       </a>
 
-    </div>
+    </div> -->
 
   </ion-content>
 </ion-view>

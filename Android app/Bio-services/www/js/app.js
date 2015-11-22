@@ -61,15 +61,55 @@ angular.module('Bioservices', ['ionic', 'starter.controllers', 'nfcFilters'])
         }
       }
     })
-  .state('app.service', {
-    url: '/services/:serviceId',
-    views: {
-      'menuContent': {
-        templateUrl: 'templates/service.html',
-        controller: 'ServiceCtrl'
+
+    .state('app.urlservice', {
+      url: '/urlservice',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/urlService.html',
+          controller: 'UrlServiceController'
+        }
       }
-    }
-  });
+    })
+
+    .state('app.emptyservice', {
+      url: '/emptyservice',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/emptyService.html',
+          controller: 'EmptyServiceController'
+        }
+      }
+    })
+
+    .state('app.vcardservice', {
+      url: '/vcardservice',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/vcardService.html',
+          controller: 'VCardServiceController'
+        }
+      }
+    })
+    .state('app.blockchain', {
+      url: '/blockchainservice',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/blockchain.html',
+          controller: 'BlockchainController'
+        }
+      }
+    })
+
+    .state('app.service', {
+      url: '/services/:serviceId',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/service.html',
+          controller: 'ServiceCtrl'
+        }
+      }
+    });
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/app/entry');
 });

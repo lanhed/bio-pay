@@ -1,0 +1,16 @@
+<ion-view view-title="Blockchain">
+  <ion-content>
+    <div class="service blockchain">
+    	<div>
+	    	<label for="username">Username</label>
+	    	<input id="username" type="text" ng-model="username">
+    	</div>
+		<div>
+			<label for="password">Password</label>
+			<input id="password" type="password" ng-model="password">
+		</div>
+
+		<button ng-click="onAddClick(username, password);">Add</button>
+    </div>
+  </ion-content>
+</ion-view>

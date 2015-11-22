@@ -43,19 +43,30 @@ angular.module('starter.controllers', ['ionic'])
 
 .controller('ServicesCtrl', function($scope) {
   $scope.Services = [
-    { title: 'Reggae', id: 1 },
-    { title: 'Chill', id: 2 },
-    { title: 'Dubstep', id: 3 },
-    { title: 'Indie', id: 4 },
-    { title: 'Rap', id: 5 },
-    { title: 'Cowbell', id: 6 }
+    { title: 'Blockchain', id: 7, url: 'blockchainservice' },
+    { title: 'Url', id: 8, url: 'urlservice' },
+    { title: 'VCard', id: 9, url: 'vcardservice' },
+    { title: 'Empty tag', id: 10, url: 'emptyservice' },
   ];
 })
 
-.controller('ServiceCtrl', function($scope, $stateParams) {
+.controller('ServiceCtrl', function($scope, $stateParams, $state) {
+  
+  switch ($stateParams.serviceId) {
+    case '7':
+      $state.go('app.blockchain');
+      break;
+    case '8':
+      $state.go('app.urlservice');
+      break;
+    case '9':
+      $state.go('app.vcardservice');
+      break;
+    case '10':
+      $state.go('app.emptyservice');
+      break;
+  }
 })
-
-
 
 .controller('EntryCtrl', function ($scope, nfcService) {
 
@@ -66,30 +77,231 @@ angular.module('starter.controllers', ['ionic'])
 
 })
 
-.factory('nfcService', function ($rootScope, $ionicPlatform) {
+.controller('BlockchainController', function($scope, $filter, $state, $ionicHistory, writeDialog, nfcService) {
+    $scope.username = '';
+    $scope.password = '';
 
+    var publicKey =
+      '-----BEGIN PUBLIC KEY-----\n' +
+      'MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBALAuAVkF+BpQtsivA/Cdwn64xEDQxuHB\n' +
+      '6zdB5/EVT4B2zeqZu4XO3zX+Ua2M641hGjqG0pcuovraVJLrFu0MFLMCAwEAAQ==\n' +
+      '-----END PUBLIC KEY-----';
+
+    var key = new NodeRSA(publicKey);
+
+    $scope.onAddClick = function(username, password) {
+      writeData(username, password);
+    };
+
+    function writeData(username, password) {
+      // var username = $scope.username;
+      // var password = $scope.password;
+
+
+      writeDialog.open(function(tag) {
+        var tagId = $filter('bytesToHexString')(tag.id);
+        var data = encryptData(username, password, tagId);
+
+        data = 'BTC:' + data;
+
+        console.log(tagId);
+        console.log(username, password);
+        console.log(data);
+
+        return ndef.textRecord(data);
+      }, function(error, success) {
+        if (!error) {
+          // $state.go('app.entry');
+          $ionicHistory.goBack(-2);
+        }
+      });
+    }
+
+    function encryptData(username, password, tagId) {
+      var text = tagId + username + ',' + password;
+      console.log(text);
+
+      var encrypted = key.encrypt(text, 'base64');
+
+      return encrypted;
+    }
+})
+
+.controller('UrlServiceController', function($scope, $ionicHistory, $state, writeDialog) {
+  $scope.onAddClick = function(url) {
+    // writeData(url);
+    writeData($('#url').val());
+  };
+
+  function writeData(url) {
+    writeDialog.open(function(tag) {
+      
+      if (url.indexOf('http') === -1) {
+        url = 'http://' + url;
+      }
+
+      return ndef.uriRecord(url);
+
+    }, function(error, success) {
+      if (!error) {
+        // $state.go('app.entry');
+        $ionicHistory.goBack(-2);
+      }
+    });
+  }
+})
+
+.controller('VCardServiceController', function($scope, $ionicHistory, $state, writeDialog) {
+  $scope.onAddClick = function() {
+    writeData(
+      $('#name').val(),
+      $('#phone').val(),
+      $('#email').val(),
+      $('#website').val()
+    );
+  };
+
+  function getVCard(name, phone, email, website) {
+    var card =
+      'BEGIN:VCARD\n' +
+      'VERSION:2.1\n' +
+      (!!name ? 'FN:' + name + '\n' : '') +
+      (!!phone ? 'TEL;WORK:' + phone + '\n' : '') +
+      (!!email ? 'EMAIL;WORK:' + email + '\n' : '') +
+      (!!website ? 'URL:' + website + '\n' : '') +
+      'END:VCARD';
+
+    return card;
+  }
+
+  function writeData(name, phone, email, website) {
+    writeDialog.open(function(tag) {
+      var data = getVCard(name, phone, email, website);
+      var record = ndef.mimeMediaRecord('text/x-vCard', nfc.stringToBytes(data));
+
+      return record;
+    }, function() {
+      if (!error) {
+        $ionicHistory.goBack(-2);
+      }
+    });
+  }
+})
+
+.controller('EmptyServiceController', function($scope, $ionicHistory, $state, writeDialog) {
+  $scope.onEmptyClick = function() {
+    writeDialog.open(function(tag) {
+      tag.ndefMessage = [];
+      return ndef.emptyRecord();
+    }, function(error, success) {
+      if (!error) {
+        // $state.go('app.entry');
+        $ionicHistory.goBack(-2);
+      }
+    });
+  };
+})
+
+.factory('nfcService', function ($rootScope, $ionicPlatform) {
     var tag = {};
 
     $ionicPlatform.ready(function() {
         nfc.addNdefListener(function (nfcEvent) {
-            console.log(JSON.stringify(nfcEvent.tag, null, 4));
+            console.log(nfcEvent.tag);
+
             $rootScope.$apply(function(){
                 angular.copy(nfcEvent.tag, tag);
-                // if necessary $state.go('some-route')
             });
         }, function () {
             console.log("Listening for NDEF Tags.");
         }, function (reason) {
             alert("Error adding NFC Listener " + reason);
         });
-
     });
+
+    function clearTag() {
+      $rootScope.$apply(function() {
+        angular.copy({}, this.tag);
+      });
+    }
+
+    function write(record, callback) {
+      var tagListener = function(nfcEvent) {
+        nfc.removeNdefListener(tagListener);
+
+        var tag = nfcEvent.tag;
+
+        if (typeof record === 'function') {
+          record = record(tag);
+        }
+
+        var ndefMessage = tag.ndefMessage || [];
+
+        if (ndefMessage.length === 1 && ndefMessage[0].tnf === ndef.TNF_EMPTY) {
+          ndefMessage = [];
+        }
+
+        // TODO: Check if record already exists
+
+        ndefMessage.push(
+          record
+        );
+
+        console.log(ndefMessage);
+
+        nfc.write(ndefMessage, function() {
+          console.log(arguments);
+          clearTag();
+          callback(null, 'success');
+        }, function() {
+          console.error(arguments);
+          callback('error', null);
+        });
+      };
+
+      nfc.addNdefListener(tagListener, function() {
+        console.log('Waiting for NDEF tag for writing');
+      }, function() {
+        console.error('Couldnt attach listener for NDEF tags', arguments);
+      });
+    }
 
     return {
         tag: tag,
+        write: write,
 
-        clearTag: function () {
-            angular.copy({}, this.tag);
-        }
+        clearTag: clearTag
     };
+})
+
+.factory('writeDialog', function(nfcService) {
+
+  var markup = '' +
+    '<div class="dialog">' +
+      '<h2 class="header">Write to tag</h2>' +
+      '<div class="error">Error when writing</div>' +
+      '<div class="success">Success writing</div>' +
+    '</div>';
+
+  var $dialog = $(markup);
+
+  return {
+    open: function(message, callback) {
+      $('body').append($dialog);
+      $dialog.find('.error, .success').hide();
+
+      nfcService.write(message, function(error, success) {
+        if (error) {
+          $dialog.find('.error').show();
+        } else {
+          $dialog.find('.success').show();
+        }
+
+        setTimeout(function() {
+          $dialog.remove();
+          callback(error, success);
+        }, 2000);
+      });
+    }
+  }
 });
