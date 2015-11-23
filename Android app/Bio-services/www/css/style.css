@@ -7,6 +7,8 @@
 
 .service input[type="text"],
 .service input[type="url"],
+.service input[type="tel"],
+.service input[type="email"],
 .service input[type="password"] {
 	border-bottom: 1px solid #eee;
 	margin-bottom: 1em;
