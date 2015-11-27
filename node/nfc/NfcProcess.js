@@ -78,8 +78,8 @@ class NfcProcess extends EventEmitter {
 		// let tagId = unparsed.substr(0, firstComma);
 		// let credentials = unparsed.substr(firstComma + 1);
 
-		let tagId = unparsed;
-
+		let tagId = unparsed.replace(/ /g,'');
+		/*
 		const ids = {
 			// juanjo
 			'0485e612ff3880': 'V9rhJrGla9jlWjIo8eaqAgAk3i+r/Ua88jQgFc6Qyeo/LaC+aAJ4Yd8ndpe029gwiTJknTTtt1LJJGqEGgg60pb/0lkcEQpJWMCjT4F7RWgAs1spyJkNDKkvW8rqZWS6ASE12rZdbMOggzNwLiM/V6jhQ+xm0t3BlUbPVE49leoC7IFy8hUJccfEdBYhJ7ERX8NWe+5bnftYQUVoX9n27lp8s/SuwFvK9Fvcvg9FcdNA8aCu7gSPHfzdWdIswrky',
@@ -94,11 +94,12 @@ class NfcProcess extends EventEmitter {
 				error: 'nfc-read',
 				errorMessage: 'Couldn\'t read the correct data from chip. Try again.'
 			});
-		}
+		}*/
 
 		return {
-			tagId,
-			credentials
+			tagId
+			//,
+			//credentials
 		};
 
 		

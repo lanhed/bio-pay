@@ -57,7 +57,7 @@ void setup(void) {
   parameters = "";
 
 
-  Serial.print("#R");
+  Serial.println("#R");
 }
 
 
@@ -174,6 +174,7 @@ void ReadBtc()
       NdefMessage message = tag.getNdefMessage();
 
       Serial.println("#P");
+      Serial.println(tag.getUidString());
 
       // cycle through the records, printing some info from each
       int recordCount = message.getRecordCount();
@@ -284,7 +285,6 @@ void loop(void) {
   // get serial data
   // print the string when a newline arrives:
   if (stringComplete) {
-    Serial.println(inputString);
     // it there is anything to do with it, do it!
     if (isState(inputString[0])) {
       state = inputString[0];

@@ -152,6 +152,9 @@ module.exports = class GUIServer {
 		 * 		currency
 		 */
 		app.post('/api/payment/:type', (req, res) => {
+			let timer = setTimeout(()=>this.fakePayment(req, res), 300);
+
+			/*
 			const type = req.params.type;
 			// const username = req.query.username;
 			// const password = req.query.password;
@@ -178,6 +181,10 @@ module.exports = class GUIServer {
 					res.status(500).json(error);
 					res.end();
 				});
+			*/
 		});
+	}
+	fakePayment(req,res) {
+		res.json({'fakePayment':true});
 	}
 };

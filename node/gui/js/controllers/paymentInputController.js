@@ -6,7 +6,7 @@ const navigation = require('../utils/navigation');
  * Payment Input Controller
  */
 module.exports = function($scope, dataService, exchangeRateService) {
-	let currency = 'EUR';
+	let currency = 'SEK';
 	let integerValue = '';
 	let decimalValue = '';
 	let isDecimal = false;
