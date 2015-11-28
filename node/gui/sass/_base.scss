@@ -8,7 +8,9 @@ html, body {
 
 body {
 	font-family: Verdana, Helvetica, Arial, sans-serif;
-	transform: rotate(0.25turn);
+	transform: rotate(0.75turn);
+	max-width:320px;
+	max-height:480px;
 }
 
 h1, h2, h3, h4, h5 {
