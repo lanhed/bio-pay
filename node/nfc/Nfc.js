@@ -44,7 +44,7 @@ module.exports = class Nfc {
 				if (port.manufacturer !== undefined) {	
 					console.log('port',port);
 					//return port.manufacturer.indexOf('Arduino_LLC__www.arduino.cc_') !== -1;
-					return port.manufacturer.indexOf('Arduino (www.arduino.cc)') !== -1;
+					return port.manufacturer.indexOf('Arduino__www.arduino.cc_') !== -1;
 				}
 				return false;
 			})[0];
