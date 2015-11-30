@@ -17,6 +17,9 @@ function setUIState(state) {
 	let $el = $('#read-nfc').find('.read-tag');
 	let $header = $el.find('h2');
 
+	let sndRead = new Audio("sounds/read.wav");
+	let sndDone = new Audio("sounds/complete.wav");
+
 	$el.removeClass('ready reading payment');
 
 	switch (state) {
@@ -26,10 +29,12 @@ function setUIState(state) {
 		case 'reading':
 			$el.addClass('reading');
 			$header.html('Hold still');
+			sndRead.play();
 			break;
 		case 'payment':
 			$el.addClass('payment');
 			$header.html('Reading complete, processing payment.');
+			sndDone.play();
 			break;
 	}
 }
@@ -39,6 +44,8 @@ module.exports = function($http, dataService) {
 	let type = dataService.get('type');
 	let amount = dataService.get('amount');
 	let currency = dataService.get('currency');
+
+	let sndError = new Audio("sounds/fail.wav");
 
 	setUIState('ready');
 
@@ -60,9 +67,11 @@ module.exports = function($http, dataService) {
 		})
 		.then(result => {
 			console.log('Payment result', result);
+			
 			navigation.navigate('confirm');
 		})
 		.catch(error => {
+			sndError.play();
 			navigation.navigate('error', error.data);
 		});
 };
