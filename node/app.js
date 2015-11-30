@@ -29,6 +29,7 @@ module.exports = class App {
 
 
 	getPaymentServices() {
+		console.log('getPaymentServices');
 		return this.paymentService.getSupportedPaymentServices();
 	}
 
@@ -37,10 +38,12 @@ module.exports = class App {
 	}
 
 	readNfc(type) {
+		console.log('readNfc');
 		return this.nfc.read(type);
 	}
 
 	makePayment(type, credentials, amount, currency) {
+		console.log('makePayment');
 		return this.paymentService.makePayment(type, credentials, amount, currency);
 	}
 };
