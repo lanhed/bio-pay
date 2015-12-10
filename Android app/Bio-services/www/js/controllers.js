@@ -1,6 +1,6 @@
 angular.module('starter.controllers', ['ionic'])
 
-.controller('AppCtrl', function($scope, $ionicModal, $timeout) {
+.controller('AppCtrl', function($scope, $ionicModal, $timeout, $ionicNavBarDelegate) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -13,24 +13,14 @@ angular.module('starter.controllers', ['ionic'])
   $scope.loginData = {};
 
   // Create the login modal that we will use later
-  $ionicModal.fromTemplateUrl('templates/login.html', {
+  /*$ionicModal.fromTemplateUrl('templates/login.html', {
     scope: $scope
   }).then(function(modal) {
     $scope.modal = modal;
   });
+*/
 
-  // Triggered in the login modal to close it
-  $scope.closeLogin = function() {
-    $scope.modal.hide();
-  };
-
-  // Open the login modal
-  $scope.login = function() {
-    $scope.modal.show();
-  };
-
-  // Perform the login action when the user submits the login form
-  $scope.doLogin = function() {
+  $scope.doLogout = function() {
     console.log('Doing login', $scope.loginData);
 
     // Simulate a login delay. Remove this and replace with your login
@@ -43,15 +33,21 @@ angular.module('starter.controllers', ['ionic'])
 
 .controller('ServicesCtrl', function($scope) {
   $scope.Services = [
-    { title: 'Blockchain', id: 7, url: 'blockchainservice' },
-    { title: 'Url', id: 8, url: 'urlservice' },
-    { title: 'VCard', id: 9, url: 'vcardservice' },
-    { title: 'Empty tag', id: 10, url: 'emptyservice' },
+    { title: 'Blockchain', id: 7, url: 'blockchainservice', icon: 'ion-social-bitcoin'  },
+    { title: 'Url', id: 8, url: 'urlservice', icon: 'ion-earth'},
+    { title: 'VCard', id: 9, url: 'vcardservice', icon: 'ion-person-add'},
+    { title: 'Empty tag', id: 10, url: 'emptyservice', icon: 'ion-trash-a' },
+    { title: 'Twitter', id: 16, url: 'twitterservice', icon: 'ion-social-twitter-outline'},
+    { title: 'Skype', id: 11, url: 'skypeservice', icon: 'ion-social-skype-outline'},
+    { title: 'Facebook', id: 12, url: 'fbservice', icon: 'ion-social-facebook'},
+    { title: 'Google+', id: 13, url: 'googleservice', icon: 'ion-social-googleplus'},
+    { title: 'Youtube', id: 14, url: 'youtubeservice', icon: 'ion-social-youtube'},
+    { title: 'Linkedin', id: 15, url: 'linkedinservice', icon: 'ion-social-linkedin'},
   ];
 })
 
 .controller('ServiceCtrl', function($scope, $stateParams, $state) {
-  
+  console.log("stateParams.serviceId");
   switch ($stateParams.serviceId) {
     case '7':
       $state.go('app.blockchain');
@@ -65,17 +61,72 @@ angular.module('starter.controllers', ['ionic'])
     case '10':
       $state.go('app.emptyservice');
       break;
+    case '11':
+      $state.go('app.skypeservice');
+      break;
+    case '12':
+      $state.go('app.fbservice');
+      break;
+    case '13':
+      $state.go('app.googleservice');
+      break;
+    case '14':
+      $state.go('app.youtubeservice');
+      break;
+    case '15':
+      $state.go('app.linkedinservice');
+      break;
+    case '16':
+      $state.go('app.twitterservice');
+      break;
+
   }
 })
 
-.controller('EntryCtrl', function ($scope, nfcService) {
+.controller('EntryCtrl', function ($scope, $state, nfcService, $ionicPopup, $ionicNavBarDelegate) {
+  setTimeout(function(){$ionicNavBarDelegate.showBar(false);},10);
 
     $scope.tag = nfcService.tag;
     $scope.clear = function() {
         nfcService.clearTag();
     };
 
+    //var tagId = $filter('bytesToHexString')(tag.id);
+    //console.log(tagId);
+/*
+    if ($scope.tag.id)
+    {
+      $state.go('app.account');
+
+
+    }*/
 })
+
+
+.controller('AccountCtrl', function ($scope, $state, nfcService, $ionicPopup, $ionicNavBarDelegate) {
+
+    $scope.tag = nfcService.tag;
+    $scope.clear = function() {
+        nfcService.clearTag();
+    };
+
+    //var tagId = $filter('bytesToHexString')(tag.id);
+    //console.log(tagId);
+/*
+    if ($scope.tag.id)
+    {
+      $state.go('app.account');
+
+
+    }*/
+})
+
+
+.controller('logoutController', function ($scope, nfcService) {
+
+        nfcService.clearTag();
+})
+
 
 .controller('BlockchainController', function($scope, $filter, $state, $ionicHistory, writeDialog, nfcService) {
     $scope.username = '';
@@ -135,12 +186,60 @@ angular.module('starter.controllers', ['ionic'])
 
   function writeData(url) {
     writeDialog.open(function(tag) {
-      
+
       if (url.indexOf('http') === -1) {
         url = 'http://' + url;
       }
 
       return ndef.uriRecord(url);
+
+    }, function(error, success) {
+      if (!error) {
+        // $state.go('app.entry');
+        $ionicHistory.goBack(-2);
+      }
+    });
+  }
+})
+
+.controller('TwitterServiceController', function($scope, $ionicHistory, $state, writeDialog) {
+  $scope.onAddClick = function(Tweet) {
+    // writeData(url);
+    writeData($('#Tweet').val());
+  };
+
+  function writeData(url) {
+    writeDialog.open(function(tag) {
+
+      if (Tweet.indexOf('Tweet') === -1) {
+        url = 'https://twitter.com/intent/follow?user_id=' + Tweet;
+      }
+
+      return ndef.uriRecord(url);
+
+    }, function(error, success) {
+      if (!error) {
+        // $state.go('app.entry');
+        $ionicHistory.goBack(-2);
+      }
+    });
+  }
+})
+
+.controller('LinkedinServiceController', function($scope, $ionicHistory, $state, writeDialog) {
+  $scope.onAddClick = function(Linkedin) {
+    // writeData(url);
+    writeData($('#LinkedinUser').val());
+  };
+
+  function writeData(url) {
+    writeDialog.open(function(tag) {
+
+      if (LinkedinUser.indexOf('LinkedinUser') === -1) {
+        url = 'linkedin://profile/[' + Tweet + ']';
+      }
+
+      return ndef.textRecord(url);
 
     }, function(error, success) {
       if (!error) {
@@ -202,7 +301,7 @@ angular.module('starter.controllers', ['ionic'])
   };
 })
 
-.factory('nfcService', function ($rootScope, $ionicPlatform) {
+.factory('nfcService', function ($state, $rootScope, $ionicPlatform) {
     var tag = {};
 
     $ionicPlatform.ready(function() {
@@ -212,6 +311,13 @@ angular.module('starter.controllers', ['ionic'])
             $rootScope.$apply(function(){
                 angular.copy(nfcEvent.tag, tag);
             });
+
+            if (nfcEvent.tag.id)
+            {
+              $state.go('app.account');
+            }
+
+
         }, function () {
             console.log("Listening for NDEF Tags.");
         }, function (reason) {

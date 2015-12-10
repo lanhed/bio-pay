@@ -8,6 +8,8 @@ angular.module('Bioservices', ['ionic', 'starter.controllers', 'nfcFilters'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
+
+
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
     if (window.StatusBar) {
@@ -19,7 +21,7 @@ angular.module('Bioservices', ['ionic', 'starter.controllers', 'nfcFilters'])
 
 .config(function($stateProvider, $urlRouterProvider) {
   $stateProvider
-    .state('app', {
+  .state('app', {
     url: '/app',
     abstract: true,
     templateUrl: 'templates/menu.html',
@@ -38,7 +40,9 @@ angular.module('Bioservices', ['ionic', 'starter.controllers', 'nfcFilters'])
       url: '/account',
       views: {
         'menuContent': {
-          templateUrl: 'templates/account.html'
+          templateUrl: 'templates/account.html',
+          controller: 'AccountCtrl'
+
         }
       }
     })
@@ -72,6 +76,25 @@ angular.module('Bioservices', ['ionic', 'starter.controllers', 'nfcFilters'])
       }
     })
 
+    .state('app.twitterservice', {
+      url: '/twitterservice',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/twitterService.html',
+          controller: 'TwitterServiceController'
+        }
+      }
+    })
+
+    .state('app.linkedinservice', {
+      url: '/linkedinservice',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/LinkedinService.html',
+          controller: 'LinkedinServiceController'
+        }
+      }
+    })
     .state('app.emptyservice', {
       url: '/emptyservice',
       views: {
@@ -101,6 +124,15 @@ angular.module('Bioservices', ['ionic', 'starter.controllers', 'nfcFilters'])
       }
     })
 
+    .state('app.logout', {
+      url: '/logout',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/logout.html',
+          controller: 'logoutController'
+        }
+      }
+    })
     .state('app.service', {
       url: '/services/:serviceId',
       views: {
