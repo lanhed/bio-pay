@@ -24,8 +24,13 @@ module.exports = class App {
 		this.paymentService = new PaymentService(config);
 	}
 
-	setupNfc() { this.nfc = new Nfc(); }
-	setupGui() { this.gui = new GUIServer(this); }
+	setupNfc() {
+		this.nfc = new Nfc();
+	}
+
+	setupGui() {
+		this.gui = new GUIServer(this);
+	}
 
 
 	getPaymentServices() {
