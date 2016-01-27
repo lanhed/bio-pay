@@ -5,10 +5,10 @@ const NodeRsa = require('node-rsa');
 
 let key = new NodeRsa({ b: 512 });
 
-let crypt = new Crypt({
+let crypt = new Crypt(/*{
 	publicKey: key.exportKey('public'),
 	privateKey: key.exportKey('private')
-});
+}*/);
 
 // let text = salt + 'A,a';
 console.log(text);
