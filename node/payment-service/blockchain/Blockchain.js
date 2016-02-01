@@ -4,29 +4,37 @@ require('colors');
 
 const blockchain = require('blockchain.info');
 const ConfirmationServer = require('./ConfirmationServer');
-const Utils = require('./bitcoin-utils');
+const BitcoinUtils = require('./BitcoinUtils');
 const request = require('request');
 
-const ErrorMessages = require('./error-messages');
+// const ErrorMessages = require('./error-messages');
 
 const baseConfig = {
-	receiveAddress: '',
-	apiCode: null,
+	oldReceiveAddress: null, // Only used until we get an API code for V2
+
+	xPub: null,
+	receiveApiCode: null,
+	apiV2Code: null,
+	apiV2HostUrl: 'http://localhost:3000',
+
 	callbackUrl: null,
-	serverPort: 8002,
-	serviceUrl: 'http://localhost:3000'
+	callbackServerPort: 8002
 };
 
 module.exports = class Blockchain {
 	constructor(config) {
 		this.config = Object.assign({}, baseConfig, config);
 
-		if (!this.config.receiveAddress) {
-			throw Error('No receive address supplied to Blockchain');
+		if (!this.config.xPub) {
+			throw Error('No xPub address supplied to the Blockchain service');
 		}
 
-		if (!this.config.apiCode) {
-			console.warn('No api code supplied to Blockchain, will make requests without'.yellow);
+		if (!this.config.receiveApiCode && !this.config.oldReceiveAddress) {
+			throw Error('No receive api code or old receive address supplied to the Blockchain service');
+		}
+
+		if (!this.config.apiV2Code) {
+			throw Error('No api code V2 supplied to the Blockchain service');
 		}
 
 		if (this.config.callbackUrl) {
@@ -37,44 +45,42 @@ module.exports = class Blockchain {
 
 		this.setupReceiver();
 
-		console.log(`Created Blockchain payment service with receive address: ${this.config.receiveAddress}`.yellow);
+		console.log(`Created Blockchain payment service with xPub address: ${this.config.xPub}`.yellow);
 	}
 
 	setupReceiver() {
-		let callbackUrl = this.config.callbackUrl ? this.config.callbackUrl + ':' + this.config.serverPort : 'http://0.0.0.0';
+		const xPub = this.config.xPub;
+		const receiveApiCode = this.config.receiveApiCode;
+		const callbackUrl = (
+			this.config.callbackUrl
+			? this.config.callbackUrl + ':' + this.config.callbackServerPort
+			: 'http://0.0.0.0'
+		);
 
-		this.receiver = new blockchain.Receive(callbackUrl);
-		
-		if (this.confirmationServer) {
-			this.receiver.listen(this.confirmationServer.server);
-			console.log(`Set up receiver with callback url "${callbackUrl}"`.cyan);
-		}
+		this.receiver = new blockchain.Receive(xPub, callbackUrl, receiveApiCode);
 	}
 
 	setupConfirmationServer() {
 		this.confirmationServer = new ConfirmationServer({
-			port: this.config.serverPort
+			port: this.config.callbackServerPort
 		});
 	}
+
 
 	getExchangeRates() {
-		return new Promise((resolve, reject) => {
-			blockchain.exchangeRates.getTicker((error, data) => {
-				if (error) {
-					return reject({
-						errorType: 'blockchain-exchange-rates',
-						errorMEssage: error
-					});
-				}
-
-				resolve(data);
-			});
-		});
+		return blockchain.exchange.getTicker().catch(error => ({
+			errorType: 'blockchain-exchange-rates',
+			errorMessage: error
+		}));
 	}
 
-	makePayment(credentials, amount, currency) {
+	//
+	// Encrypted payment
+	// Goes to a central server that decrypts the credentials and performs the payment
+	//
+	makeEncryptedPayment(credentials, amount/*, currency*/) {
 		return new Promise((resolve, reject) => {
-			let receiveAddress = this.config.receiveAddress;
+			const receiveAddress = this.config.receiveAddress;
 			let url = this.config.serviceUrl;
 
 			url += `/walletTsx?credentials=${encodeURIComponent(credentials.credentials)}&tagId=${credentials.tagId}&amount=${amount}&receiveAddress=${receiveAddress}`;
@@ -82,7 +88,7 @@ module.exports = class Blockchain {
 			console.log(url);
 
 			request(url, (error, response, body) => {
-				let parsed = JSON.parse(body);
+				const parsed = JSON.parse(body);
 
 				if (error || response.statusCode !== 200) {
 					return reject(error || parsed);
@@ -93,50 +99,100 @@ module.exports = class Blockchain {
 		});
 	}
 
-	// makePayment(credentials, amount, currency) {
-	// 	let wallet = new blockchain.MyWallet(credentials.username, credentials.password, credentials.password2);
+	//
+	// Unencrypted payment
+	// Goes directly to payment service, credentials are cleartext
+	//
+	makePayment(credentials, amount/*, currency*/) {
+		const amountInSatoshi = BitcoinUtils.btcToSatoshi(amount);
 
-	// 	// Transform currency into satoshi
-	// 	let satoshi = Math.round(Utils.btcToSatoshi(amount));
+		const identifier = credentials.username;
+		const password = credentials.password;
 
-	// 	console.log('New payment requested');
-	// 	console.log(this.config);
-	// 	console.log(this.receiver);
+		const wallet = new blockchain.MyWallet(identifier, password, {
+			apiCode: this.config.apiV2Code,
+			apiHost: this.config.apiV2HostUrl
+		});
 
-	// 	return new Promise((resolve, reject) => {
-	// 		this.receiver.create(this.config.receiveAddress, (error, addressData) => {
-	// 			if (error) {
-	// 				return reject({
-	// 					errortype: 'blockchain-payment',
-	// 					errorMessage: error
-	// 				});
-	// 			}
-	// 			console.log('Received new payment address');
+		this.fixMyWalletParamsHack(wallet);
 
-	// 			wallet.send({
-	// 				to: addressData.input_address,
-	// 				amount: satoshi
-	// 			}, (error, data) => {
-	// 				// Error in http-request
-	// 				if (error) {
-	// 					return reject({
-	// 						errorType: 'blockchain-payment',
-	// 						errorMessage: error
-	// 					});
-	// 				}
+		return Promise.all([
+				this.getReceiveAddress(),	// eslint-disable-line indent
+				wallet.login()				// eslint-disable-line indent
+			])								// eslint-disable-line indent
+			.then(values => {
+				const generatedAddress = values[0].address;
+				
+				console.log(`Making a new payment (BTC ${amount})`);
+				return wallet.send(generatedAddress, amountInSatoshi);
+			})
+			.then(paymentResponse => {
+				console.log(`Succesfull payment made (BTC ${amount})`, paymentResponse);
+				//
+				// Should log out wallet
+				//
+				return paymentResponse;
+			})
+			.catch(error => ({
+				errorType: 'blockchain-payment',
+				errorMessage: error
+			}));		
+	}
 
-	// 				// Error response from API
-	// 				if (data.error) {
-	// 					let errorMessage = ErrorMessages[data.error] || data.error;
-	// 					return reject({
-	// 						errorType: 'blockchain-payment',
-	// 						errorMessage: errorMessage
-	// 					});
-	// 				}
+	//
+	// Generates an address where coins can be transfered to
+	// This abstraction method is only needed until we have an API V2 code for receiving
+	//
+	getReceiveAddress() {
+		if (!this.config.receiveApiCode && this.config.oldReceiveAddress) {
+			// Use old way, not supported after 1/1-2016
+			return new Promise((resolve, reject) => {
+				const url = `https://blockchain.info/api/receive?method=create&address=${this.config.oldReceiveAddress}`;
 
-	// 				resolve(data);
-	// 			});
-	// 		});
-	// 	});
-	// }
+				request(url, (error, response, body) => {
+					const parsed = JSON.parse(body);
+
+					if (error || response.statusCode !== 200) {
+						return reject(error || parsed);
+					}
+
+					resolve({
+						address: parsed.input_address
+					});
+				});
+			});
+		}
+
+		return this.receiver.generate();
+	}
+
+	//
+	// Last version checked needed in "blockchain.info": "2.2.0"
+	// 
+	// MyWallet implementation sets the query parameter name for receiving addres as "address" but the API expects the query parameter name "to".
+	// The MyWallet has a function called "getParams" which returns an object that the query parameters are added to.
+	// We override this function and add a getter with the name "to" to the returned object that returns the value of "address".
+	//
+	fixMyWalletParamsHack(wallet) {
+		const _getParams = wallet.getParams.bind(wallet);
+
+		wallet.getParams = () => {
+			const params = _getParams();
+
+			Object.defineProperty(params, 'to', {
+				enumerable: true,
+				configurable: true,
+				get() {
+					return this.address;
+				},
+				set(value) {
+					// If the "to" value is ever set, we remove our implementation and make it a regular property.
+					delete this.to;
+					this.to = value;
+				}
+			});
+
+			return params;
+		};
+	}
 };

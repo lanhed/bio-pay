@@ -6,6 +6,6 @@ module.exports = {
 	},
 
 	satoshiToBtc(amount) {
-		return amount * 0.00000001;
+		return Math.round(amount * 0.00000001);
 	}
 };
