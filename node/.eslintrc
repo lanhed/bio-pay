@@ -1,9 +1,0 @@
-{
-	"env": {
-		"node": true
-	},
-	"rules": {
-		"undef": true,
-		"unused": true
-	}
-}
