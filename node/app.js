@@ -6,7 +6,7 @@ const PaymentService = require('./payment-service/PaymentService');
 const Nfc = require('./nfc/Nfc');
 const GUIServer = require('./gui/GUIServer');
 
-const Settings = require('./settings');
+const Settings = require('./utils/settings');
 
 module.exports = class App {
 
@@ -19,8 +19,11 @@ module.exports = class App {
 		console.log('~ Yaaaaaaaaaaaaaay ~'.rainbow.bgWhite);
 	}
 
+	//
+	// Setup
+	//
 	setupPaymentService() {
-		let config = Settings.readJSON('payment-services');
+		const config = Settings.getJSON('payment-services');
 		this.paymentService = new PaymentService(config);
 	}
 
@@ -33,6 +36,9 @@ module.exports = class App {
 	}
 
 
+	//
+	// API access
+	//
 	getPaymentServices() {
 		return this.paymentService.getSupportedPaymentServices();
 	}
@@ -49,4 +55,3 @@ module.exports = class App {
 		return this.paymentService.makePayment(type, credentials, amount, currency);
 	}
 };
-
