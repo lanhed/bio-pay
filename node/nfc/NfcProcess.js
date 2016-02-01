@@ -18,7 +18,7 @@ class NfcProcess extends EventEmitter {
 		this.connection = connection;
 		this.message = message;
 
-		this.data = "";
+		this.data = '';
 
 		_.bindAll(this, 'onData', 'onError', 'onClose');
 		this.connection.on('data', this.onData);
